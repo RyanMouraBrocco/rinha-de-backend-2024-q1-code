@@ -13,25 +13,30 @@ var app = builder.Build();
 
 
 #region MinimalApi
-
 var customerGroup = app.MapGroup("/clientes");
 customerGroup.MapPost("/{id}/transacoes", (int id, [FromBody] TransactionRequest request) =>
 {
     var sqlAccess = new SqlAccess(new SqlConnection());
 
-    var contactCheck = sqlAccess.GetCustomerById(id);
+    var contactCheck = sqlAccess.GetCustomerById(ref id);
     if (contactCheck is null)
         return Results.NotFound();
 
 
     // i need to understand better to create the validations rules here
+    if (request.Type == 'c')
+    {
+        // no idea man
+    }
+    else
+    {
+        var value = request.ValueInCents;
+        if (!sqlAccess.DiscontInDebt(ref id, ref value))
+            return Results.StatusCode(422);
+    }
 
 
-
-    sqlAccess.InsertTransaction(id, request);
-
-
-
+    sqlAccess.InsertTransaction(ref id, request); // this could be in parallel in a queue
 
     return Results.Ok();
 });
@@ -48,14 +53,11 @@ public record Customer(int Id, int Limit, int Balance); // same here
 
 
 #region SerializeConfigs
-
 [JsonSerializable(typeof(TransactionRequest[]))]
 internal partial class AppJsonSerializerContext : JsonSerializerContext;
-
 #endregion
 
 #region SqlConnection
-
 internal class SqlAccess
 {
     private readonly SqlConnection _connection;
@@ -64,7 +66,7 @@ internal class SqlAccess
         _connection = connection;
     }
 
-    public Customer GetCustomerById(int id)
+    public Customer GetCustomerById(ref readonly int id)
     {
         if (_connection.State != System.Data.ConnectionState.Open)
             _connection.Open();
@@ -83,7 +85,7 @@ internal class SqlAccess
         return customer;
     }
 
-    public void InsertTransaction(int customerId, TransactionRequest transactionRequest)
+    public void InsertTransaction(ref readonly int customerId, TransactionRequest transactionRequest)
     {
         if (_connection.State != System.Data.ConnectionState.Open)
             _connection.Open();
@@ -95,6 +97,19 @@ internal class SqlAccess
         command.Parameters.AddWithValue("Description", transactionRequest.Description); // I belive is possible to improve performance here, because here the AddWithValue is accepting a object and could be the excat value
         command.Parameters.AddWithValue("CreateDate", DateTime.Now); // I belive is possible to improve performance here, because here the AddWithValue is accepting a object and could be the excat value
         _ = command.ExecuteNonQuery();
+    }
+
+    public bool DiscontInDebt(ref readonly int customerId, ref readonly int value)
+    {
+        if (_connection.State != System.Data.ConnectionState.Open)
+            _connection.Open();
+
+        var command = new SqlCommand("[Stp_DebtTransaction]", _connection);
+        command.CommandType = System.Data.CommandType.StoredProcedure;
+
+        command.Parameters.AddWithValue("CustomerId", customerId); // I belive is possible to improve performance here, because here the AddWithValue is accepting a object and could be the excat value
+        command.Parameters.AddWithValue("Value", value); // I belive is possible to improve performance here, because here the AddWithValue is accepting a object and could be the excat value
+        return (int)command.ExecuteScalar() > 1;
     }
 }
 
