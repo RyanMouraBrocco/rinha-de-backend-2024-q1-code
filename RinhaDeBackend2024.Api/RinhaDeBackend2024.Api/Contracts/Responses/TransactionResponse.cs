@@ -2,9 +2,9 @@
 {
     public sealed class TransactionResponse // here could be a unsign integer or maybe somethin with less bytes
     {
-        public int ValueInCents;
-        public char Type;
-        public string Description;
-        public DateTime CreateDate;
+        public int ValueInCents { get; set; }
+        public char Type { get; set; }
+        public string Description { get; set; }
+        public DateTime CreateDate { get; set; }
     }
 }

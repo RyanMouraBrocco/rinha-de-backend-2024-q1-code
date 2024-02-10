@@ -1,5 +1,6 @@
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Data.SqlClient;
+using RinhaDeBackend2024.Api.Contracts.Entities;
 using RinhaDeBackend2024.Api.Contracts.Requests;
 using RinhaDeBackend2024.Api.Contracts.Responses;
 using RinhaDeBackend2024.Api.DataAccess;
@@ -67,7 +68,6 @@ customerGroup.MapGet("/{id}/extrato", ([FromRoute] int id, [FromServices] SqlAcc
 app.Run();
 
 #endregion
-
 
 #region SerializeConfigs
 [JsonSerializable(typeof(TransactionRequest[]))]
