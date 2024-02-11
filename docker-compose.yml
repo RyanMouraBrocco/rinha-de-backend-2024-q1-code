@@ -6,6 +6,7 @@ services:
     hostname: api01
     environment:
       - DB_HOSTNAME=db
+      - DB_PASSWORD=BabyDoBiruleibe123#
     ports:
       - "8081:8080"
     depends_on:
@@ -22,6 +23,7 @@ services:
     hostname: api02
     environment:
       - DB_HOSTNAME=db
+      - DB_PASSWORD=BabyDoBiruleibe123#
     ports:
       - "8082:8080"
  
@@ -41,20 +43,20 @@ services:
           memory: "10MB"
 
   db:
-    image: mcr.microsoft.com/mssql/server:latest
+    image: mcr.microsoft.com/mssql/server:2022-latest
     hostname: db
+    user: root
     environment:
-      - MSSQL_SA_PASSWORD=123
-      - MSSQL_DB=Rinha
+      - SA_PASSWORD=BabyDoBiruleibe123#
+      - ACCEPT_EULA=Y
+      - MSSQL_PID=Express
     ports:
       - "1433:1433"
-    volumes:
-      - ./script.sql:/docker-entrypoint-initdb.d/script.sql
     deploy:
       resources:
         limits:
           cpus: "0.13"
-          memory: "140MB"
+          memory: "2GB"
 
 # O uso do modo `bridge` deve ser adequado à carga que será usada no teste.
 # A edição anterior se beneficiou do modo host pois o volume de requisições

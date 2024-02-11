@@ -13,7 +13,11 @@ builder.Services.ConfigureHttpJsonOptions(options =>
 });
 
 #region Services Injections
-builder.Services.AddSingleton(new SqlAccess(new SqlConnection(builder.Configuration.GetConnectionString("Rinha"))));
+var rawConnectionString = builder.Configuration.GetConnectionString("Rinha");
+var connectionString = rawConnectionString.Replace("@HOSTNAME", Environment.GetEnvironmentVariable("DB_HOSTNAME"))
+                                          .Replace("@PASSWORD", Environment.GetEnvironmentVariable("DB_PASSWORD"));
+
+builder.Services.AddSingleton(new SqlAccess(new SqlConnection(connectionString)));
 #endregion
 
 var app = builder.Build();
