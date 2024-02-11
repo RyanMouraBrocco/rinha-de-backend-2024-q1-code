@@ -1,5 +1,4 @@
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.Data.SqlClient;
 using RinhaDeBackend2024.Api;
 using RinhaDeBackend2024.Api.Contracts.Requests;
 using RinhaDeBackend2024.Api.Contracts.Responses;
@@ -18,6 +17,7 @@ var rawConnectionString = builder.Configuration.GetConnectionString("Rinha");
 var connectionString = rawConnectionString.Replace("@HOSTNAME", Environment.GetEnvironmentVariable("DB_HOSTNAME"))
                                           .Replace("@PASSWORD", Environment.GetEnvironmentVariable("DB_PASSWORD"));
 
+
 builder.Services.AddSingleton(new SqlAccess(connectionString));
 #endregion
 
@@ -33,7 +33,7 @@ customerGroup.MapPost("/{id}/transacoes", ([FromRoute] int id,
     if (id > 6 || id < 0)
         return Results.NotFound();
 
-    if (request.Type != 'c' || request.Type != 'd')
+    if (request.Type != 'c' && request.Type != 'd')
         return Results.UnprocessableEntity();
 
     if (request.ValueInCents < 0)

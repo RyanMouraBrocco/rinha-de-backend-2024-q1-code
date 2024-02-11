@@ -7,7 +7,7 @@ namespace RinhaDeBackend2024.Api.DataAccess
 {
     public sealed class SqlAccess
     {
-        private const byte CONNECTION_POOL_LEN = 20;
+        private const byte CONNECTION_POOL_LEN = 80;
         private readonly SqlConnection[] _connectionPool;
         private byte _connectionSelector;
         public SqlAccess(string connectionString)
@@ -24,12 +24,17 @@ namespace RinhaDeBackend2024.Api.DataAccess
         {
             lock (_connectionPool)
             {
+                var connection = _connectionPool[_connectionSelector];
+
+                if (_connectionPool[_connectionSelector].State != System.Data.ConnectionState.Open)
+                    _connectionPool[_connectionSelector].Open();
+
                 if (_connectionSelector == CONNECTION_POOL_LEN - 1)
                     _connectionSelector = 0;
                 else
                     _connectionSelector++;
 
-                return _connectionPool[_connectionSelector];
+                return connection;
             }
         }
 
@@ -37,9 +42,6 @@ namespace RinhaDeBackend2024.Api.DataAccess
         public Customer GetCustomerById(ref readonly int id)
         {
             var connection = GetConnection();
-
-            if (_connectionPool[_connectionSelector].State != System.Data.ConnectionState.Open)
-                _connectionPool[_connectionSelector].Open();
 
             var command = new SqlCommand(QUERY_GETCUSTOMER_BY_ID, connection);
             command.Parameters.AddWithValue("Id", id); // I belive is possible to improve performance here, because here the AddWithValue is accepting a object and could be the excat value
@@ -71,25 +73,21 @@ namespace RinhaDeBackend2024.Api.DataAccess
         {
             var connection = GetConnection();
 
-            if (connection.State != System.Data.ConnectionState.Open)
-                connection.Open();
-
             var command = new SqlCommand(QUERY_INSERT_TRANSACTION, connection);
             command.Parameters.AddWithValue("CustomerId", customerId); // I belive is possible to improve performance here, because here the AddWithValue is accepting a object and could be the excat value
             command.Parameters.AddWithValue("ValuesInCents", transactionRequest.ValueInCents); // I belive is possible to improve performance here, because here the AddWithValue is accepting a object and could be the excat value
             command.Parameters.AddWithValue("IsCredit", transactionRequest.Type == 'c'); // I belive is possible to improve performance here, because here the AddWithValue is accepting a object and could be the excat value
             command.Parameters.AddWithValue("Description", transactionRequest.Description); // I belive is possible to improve performance here, because here the AddWithValue is accepting a object and could be the excat value
             command.Parameters.AddWithValue("CreateDate", DateTime.Now); // I belive is possible to improve performance here, because here the AddWithValue is accepting a object and could be the excat value
-            _ = command.ExecuteNonQuery();
+
+            lock (connection)
+                _ = command.ExecuteNonQuery();
         }
 
         private const string QUERY_GET_LAST_10_TRANSACTIONS_BY_CUSTOMERID = "SELECT TOP 10ValueInCents,IsCredit,[Description],CreateDate FROM[Balance_Transaction](NOLOCK)WHERE CustomerId=1 ORDER BY ID DESC";
         public List<TransactionResponse> GetLast10TransactionsByCustomerId(ref readonly int customerId)
         {
             var connection = GetConnection();
-
-            if (connection.State != System.Data.ConnectionState.Open)
-                connection.Open();
 
             var command = new SqlCommand(QUERY_GET_LAST_10_TRANSACTIONS_BY_CUSTOMERID, connection);
             command.Parameters.AddWithValue("CustomerId", customerId); // I belive is possible to improve performance here, because here the AddWithValue is accepting a object and could be the excat value
@@ -122,9 +120,6 @@ namespace RinhaDeBackend2024.Api.DataAccess
         {
             var connection = GetConnection();
 
-            if (connection.State != System.Data.ConnectionState.Open)
-                connection.Open();
-
             var command = new SqlCommand("[Stp_DebtTransaction]", connection);
             command.CommandType = System.Data.CommandType.StoredProcedure;
 
@@ -154,9 +149,6 @@ namespace RinhaDeBackend2024.Api.DataAccess
         public BalanceResponse AddInCredit(ref readonly int customerId, ref readonly int value)
         {
             var connection = GetConnection();
-
-            if (connection.State != System.Data.ConnectionState.Open)
-                connection.Open();
 
             var command = new SqlCommand("[Stp_CreditTransaction]", connection);
             command.CommandType = System.Data.CommandType.StoredProcedure;
