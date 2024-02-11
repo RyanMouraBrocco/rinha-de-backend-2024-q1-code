@@ -1,4 +1,6 @@
-﻿namespace RinhaDeBackend2024.Api.Contracts.Entities
+﻿using System.Text.Json.Serialization;
+
+namespace RinhaDeBackend2024.Api.Contracts.Entities
 {
     public sealed class Customer
     {

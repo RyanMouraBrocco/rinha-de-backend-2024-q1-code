@@ -55,7 +55,7 @@ namespace RinhaDeBackend2024.Api.DataAccess
             _ = command.ExecuteNonQuery();
         }
 
-        private const string QUERY_GET_LAST_10_TRANSACTIONS_BY_CUSTOMERID = "SELECT TOP 10ValueInCents,IsCredit,[Description],CreateDate FROM[Balance_Transaction](NOLOCK)WHERE CustomerId=1";
+        private const string QUERY_GET_LAST_10_TRANSACTIONS_BY_CUSTOMERID = "SELECT TOP 10ValueInCents,IsCredit,[Description],CreateDate FROM[Balance_Transaction](NOLOCK)WHERE CustomerId=1 ORDER BY ID DESC";
         public List<TransactionResponse> GetLast10TransactionsByCustomerId(ref readonly int customerId)
         {
             if (_connection.State != System.Data.ConnectionState.Open)
@@ -84,7 +84,7 @@ namespace RinhaDeBackend2024.Api.DataAccess
             return transactions;
         }
 
-        public bool DiscontInDebt(ref readonly int customerId, ref readonly int value)
+        public BalanceResponse DiscontInDebt(ref readonly int customerId, ref readonly int value)
         {
             if (_connection.State != System.Data.ConnectionState.Open)
                 _connection.Open();
@@ -94,7 +94,49 @@ namespace RinhaDeBackend2024.Api.DataAccess
 
             command.Parameters.AddWithValue("CustomerId", customerId); // I belive is possible to improve performance here, because here the AddWithValue is accepting a object and could be the excat value
             command.Parameters.AddWithValue("Value", value); // I belive is possible to improve performance here, because here the AddWithValue is accepting a object and could be the excat value
-            return (int)command.ExecuteScalar() > 1;
+            var reader = command.ExecuteReader();
+
+            BalanceResponse response = null;
+
+            if (reader.Read())
+            {
+                response = new BalanceResponse()
+                {
+                    Limit = reader.GetInt32(0),
+                    Balance = reader.GetInt32(1)
+                };
+            }
+            reader.Close();
+
+            return response;
+        }
+
+        public BalanceResponse AddInCredit(ref readonly int customerId, ref readonly int value)
+        {
+            if (_connection.State != System.Data.ConnectionState.Open)
+                _connection.Open();
+
+            var command = new SqlCommand("[Stp_CreditTransaction]", _connection);
+            command.CommandType = System.Data.CommandType.StoredProcedure;
+
+            command.Parameters.AddWithValue("CustomerId", customerId); // I belive is possible to improve performance here, because here the AddWithValue is accepting a object and could be the excat value
+            command.Parameters.AddWithValue("Value", value); // I belive is possible to improve performance here, because here the AddWithValue is accepting a object and could be the excat value
+            
+            var reader = command.ExecuteReader();
+
+            BalanceResponse response = null;
+
+            if (reader.Read())
+            {
+                response = new BalanceResponse()
+                {
+                    Limit = reader.GetInt32(0),
+                    Balance = reader.GetInt32(1)
+                };
+            }
+            reader.Close();
+
+            return response;
         }
     }
 }

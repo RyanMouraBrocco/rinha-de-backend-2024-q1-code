@@ -21,7 +21,7 @@ CREATE TABLE [Balance_Transaction]
 GO
 ALTER TABLE [Balance_Transaction] ADD CONSTRAINT [FK_Balance_Transaction_Customer] FOREIGN KEY (CustomerId) References Customer(Id)
 GO
-ALTER PROCEDURE Stp_DebtTransaction 
+CREATE PROCEDURE Stp_DebtTransaction 
 (
 	@CustomerId INT,
 	@Value INT
@@ -29,10 +29,32 @@ ALTER PROCEDURE Stp_DebtTransaction
 AS
 BEGIN
 	SET NOCOUNT ON
+	
+	DECLARE @TmpTable TABLE (Limit INT NOT NULL, Balance INT NOT NULL)
+
 	UPDATE Customer
 	SET Balance = Balance - @Value
+	OUTPUT INSERTED.Limit, INSERTED.Balance INTO @TmpTable
 	WHERE Id = @CustomerId AND (Balance - @Value) >= -Limit
-	SELECT @@ROWCOUNT
+	
+	SELECT Limit, Balance FROM @TmpTable
+END
+GO
+CREATE PROCEDURE Stp_CreditTransaction 
+(
+	@CustomerId INT,
+	@Value INT
+)
+AS
+BEGIN
+	SET NOCOUNT ON
+	DECLARE @TmpTable TABLE (Limit INT NOT NULL, Balance INT NOT NULL)
+	UPDATE Customer
+	SET Balance = Balance + @Value
+	OUTPUT INSERTED.Limit, INSERTED.Balance INTO @TmpTable
+	WHERE Id = @CustomerId
+	
+	SELECT Limit, Balance FROM @TmpTable
 END
 GO
 INSERT INTO Customer VALUES (100000, 0)

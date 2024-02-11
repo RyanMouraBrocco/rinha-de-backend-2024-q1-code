@@ -1,10 +1,13 @@
-﻿using RinhaDeBackend2024.Api.Contracts.Entities;
+﻿using System.Text.Json.Serialization;
+using RinhaDeBackend2024.Api.Contracts.Entities;
 
 namespace RinhaDeBackend2024.Api.Contracts.Responses
 {
     public sealed class ExtractResponse
     {
-        public Customer Saldo { get; set; }
-        public List<TransactionResponse> UltimasTransacoes { get; set; }
+        [JsonPropertyName("saldo")]
+        public CustomerResponse Balance { get; set; }
+        [JsonPropertyName("ultimas_transacoes")]
+        public List<TransactionResponse> LastTransactions { get; set; }
     }
 }

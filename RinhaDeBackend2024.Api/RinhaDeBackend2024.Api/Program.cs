@@ -1,5 +1,6 @@
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Data.SqlClient;
+using RinhaDeBackend2024.Api;
 using RinhaDeBackend2024.Api.Contracts.Requests;
 using RinhaDeBackend2024.Api.Contracts.Responses;
 using RinhaDeBackend2024.Api.DataAccess;
@@ -29,32 +30,39 @@ customerGroup.MapPost("/{id}/transacoes", ([FromRoute] int id,
                                            [FromBody] TransactionRequest request,
                                            [FromServices] SqlAccess sqlAccess) =>
 {
+    if (id > 6 || id < 0)
+        return Results.NotFound();
+
     var contactCheck = sqlAccess.GetCustomerById(ref id);
     if (contactCheck is null)
         return Results.NotFound();
 
+    BalanceResponse response = null;
 
-    // i need to understand better to create the validations rules here
     if (request.Type == 'c')
     {
-        // no idea man
+        var value = request.ValueInCents;
+        response = sqlAccess.AddInCredit(ref id, ref value);
     }
     else
     {
         var value = request.ValueInCents;
-        if (!sqlAccess.DiscontInDebt(ref id, ref value))
+        response = sqlAccess.DiscontInDebt(ref id, ref value);
+        if (response is null)
             return Results.StatusCode(422);
     }
 
-
     sqlAccess.InsertTransaction(ref id, request); // this could be in parallel in a queue
 
-    return Results.Ok();
+    return Results.Ok(response);
 });
 
 
 customerGroup.MapGet("/{id}/extrato", ([FromRoute] int id, [FromServices] SqlAccess sqlAccess) =>
 {
+    if (id > 6 || id < 0)
+        return Results.NotFound();
+
     var customer = sqlAccess.GetCustomerById(ref id);
     if (customer is null)
         return Results.NotFound();
@@ -63,8 +71,13 @@ customerGroup.MapGet("/{id}/extrato", ([FromRoute] int id, [FromServices] SqlAcc
 
     return Results.Ok(new ExtractResponse()
     {
-        Saldo = customer,
-        UltimasTransacoes = transactions
+        Balance = new CustomerResponse()
+        {
+            Balance = customer.Balance,
+            Date = DateTime.Now,
+            Limit = customer.Limit
+        },
+        LastTransactions = transactions
     });
 });
 
@@ -76,5 +89,6 @@ app.Run();
 [JsonSerializable(typeof(TransactionRequest[]))]
 [JsonSerializable(typeof(TransactionResponse[]))]
 [JsonSerializable(typeof(ExtractResponse[]))]
+[JsonSerializable(typeof(BalanceResponse[]))]
 internal partial class AppJsonSerializerContext : JsonSerializerContext;
 #endregion
