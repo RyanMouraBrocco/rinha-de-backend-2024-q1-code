@@ -18,7 +18,7 @@ var rawConnectionString = builder.Configuration.GetConnectionString("Rinha");
 var connectionString = rawConnectionString.Replace("@HOSTNAME", Environment.GetEnvironmentVariable("DB_HOSTNAME"))
                                           .Replace("@PASSWORD", Environment.GetEnvironmentVariable("DB_PASSWORD"));
 
-builder.Services.AddSingleton(new SqlAccess(new SqlConnection(connectionString)));
+builder.Services.AddSingleton(new SqlAccess(connectionString));
 #endregion
 
 var app = builder.Build();
@@ -33,9 +33,14 @@ customerGroup.MapPost("/{id}/transacoes", ([FromRoute] int id,
     if (id > 6 || id < 0)
         return Results.NotFound();
 
-    var contactCheck = sqlAccess.GetCustomerById(ref id);
-    if (contactCheck is null)
-        return Results.NotFound();
+    if (request.Type != 'c' || request.Type != 'd')
+        return Results.UnprocessableEntity();
+
+    if (request.ValueInCents < 0)
+        return Results.UnprocessableEntity();
+
+    if (request.Description.Length > 10)
+        return Results.UnprocessableEntity();
 
     BalanceResponse response = null;
 
@@ -49,7 +54,7 @@ customerGroup.MapPost("/{id}/transacoes", ([FromRoute] int id,
         var value = request.ValueInCents;
         response = sqlAccess.DiscontInDebt(ref id, ref value);
         if (response is null)
-            return Results.StatusCode(422);
+            return Results.UnprocessableEntity();
     }
 
     sqlAccess.InsertTransaction(ref id, request); // this could be in parallel in a queue
@@ -64,9 +69,6 @@ customerGroup.MapGet("/{id}/extrato", ([FromRoute] int id, [FromServices] SqlAcc
         return Results.NotFound();
 
     var customer = sqlAccess.GetCustomerById(ref id);
-    if (customer is null)
-        return Results.NotFound();
-
     var transactions = sqlAccess.GetLast10TransactionsByCustomerId(ref id);
 
     return Results.Ok(new ExtractResponse()
