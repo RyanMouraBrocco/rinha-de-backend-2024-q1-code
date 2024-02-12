@@ -13,11 +13,11 @@ services:
       - "8081:8080"
     depends_on:
       - db
-    # deploy:
-    #   resources:
-    #     limits:
-    #       cpus: "0.6"
-    #       memory: "200MB"
+    deploy:
+      resources:
+        limits:
+          cpus: "0.6"
+          memory: "200MB"
 
   api02:
     # Essa sintaxe reusa o que foi declarado em 'api01'.
@@ -40,11 +40,11 @@ services:
       - api02
     ports:
       - "9999:9999" 
-    # deploy:
-    #   resources:
-    #     limits:
-    #       cpus: "0.17"
-    #       memory: "10MB"
+    deploy:
+      resources:
+        limits:
+          cpus: "0.17"
+          memory: "10MB"
 
   db:
     image: mcr.microsoft.com/mssql/server:2022-latest
@@ -58,11 +58,11 @@ services:
       - MSSQL_PID=Express
     ports:
       - "1433:1433"
-    # deploy:
-    #   resources:
-    #     limits:
-    #       cpus: "0.13"
-    #       memory: "2GB"
+    deploy:
+      resources:
+        limits:
+          cpus: "0.13"
+          memory: "2GB"
 
 # O uso do modo `bridge` deve ser adequado à carga que será usada no teste.
 # A edição anterior se beneficiou do modo host pois o volume de requisições

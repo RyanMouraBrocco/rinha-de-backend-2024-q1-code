@@ -7,7 +7,7 @@ namespace RinhaDeBackend2024.Api.DataAccess
 {
     public sealed class SqlAccess
     {
-        private const byte CONNECTION_POOL_LEN = 80;
+        private const byte CONNECTION_POOL_LEN = 20;
         private readonly SqlConnection[] _connectionPool;
         private byte _connectionSelector;
         public SqlAccess(string connectionString)

@@ -29,8 +29,6 @@ customerGroup.MapPost("/{id}/transacoes", ([FromRoute] int id,
                                            [FromBody] TransactionRequest request,
                                            [FromServices] SqlAccess sqlAccess) =>
 {
-    return Results.Ok(new BalanceResponse() { Balance = 0, Limit = 0 });
-
     if (id > 5 || id < 0)
         return Results.NotFound();
 
@@ -40,7 +38,7 @@ customerGroup.MapPost("/{id}/transacoes", ([FromRoute] int id,
     if (request.ValueInCents < 0)
         return Results.UnprocessableEntity();
 
-    if (request.Description.Length > 10)
+    if (request.Description is null || request.Description.Length > 10)
         return Results.UnprocessableEntity();
 
     BalanceResponse response = null;
@@ -66,17 +64,6 @@ customerGroup.MapPost("/{id}/transacoes", ([FromRoute] int id,
 
 customerGroup.MapGet("/{id}/extrato", ([FromRoute] int id, [FromServices] SqlAccess sqlAccess) =>
 {
-    return Results.Ok(new ExtractResponse()
-    {
-        Balance = new CustomerResponse()
-        {
-            Balance = 0,
-            Date = DateTime.Now,
-            Limit = 0
-        },
-        LastTransactions = []
-    });
-
     if (id > 5 || id < 0)
         return Results.NotFound();
 
