@@ -4,6 +4,8 @@ services:
   api01: &api
     image: ryanmourabrocco/rinha-de-backend-2024-q1:latest
     hostname: api01
+    networks:
+    - rinha-network
     environment:
       - DB_HOSTNAME=db
       - DB_PASSWORD=BabyDoBiruleibe123#
@@ -11,11 +13,11 @@ services:
       - "8081:8080"
     depends_on:
       - db
-    deploy:
-      resources:
-        limits:
-          cpus: "0.6"
-          memory: "200MB"
+    # deploy:
+    #   resources:
+    #     limits:
+    #       cpus: "0.6"
+    #       memory: "200MB"
 
   api02:
     # Essa sintaxe reusa o que foi declarado em 'api01'.
@@ -29,6 +31,8 @@ services:
  
   nginx:
     image: nginx:latest
+    networks:
+      - rinha-network
     volumes:
       - ./nginx.conf:/etc/nginx/nginx.conf:ro
     depends_on:
@@ -36,27 +40,29 @@ services:
       - api02
     ports:
       - "9999:9999" 
-    deploy:
-      resources:
-        limits:
-          cpus: "0.17"
-          memory: "10MB"
+    # deploy:
+    #   resources:
+    #     limits:
+    #       cpus: "0.17"
+    #       memory: "10MB"
 
   db:
     image: mcr.microsoft.com/mssql/server:2022-latest
     hostname: db
     user: root
+    networks:
+      - rinha-network
     environment:
       - SA_PASSWORD=BabyDoBiruleibe123#
       - ACCEPT_EULA=Y
       - MSSQL_PID=Express
     ports:
       - "1433:1433"
-    deploy:
-      resources:
-        limits:
-          cpus: "0.13"
-          memory: "2GB"
+    # deploy:
+    #   resources:
+    #     limits:
+    #       cpus: "0.13"
+    #       memory: "2GB"
 
 # O uso do modo `bridge` deve ser adequado à carga que será usada no teste.
 # A edição anterior se beneficiou do modo host pois o volume de requisições
@@ -65,6 +71,5 @@ services:
 # modo que quiser desde que não conflite com portas trivialmente usadas em um
 # SO.
 networks:
-  default:
+  rinha-network:
     driver: bridge
-    name: rinha-nginx-2024q1

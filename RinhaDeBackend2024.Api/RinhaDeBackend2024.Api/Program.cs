@@ -17,7 +17,6 @@ var rawConnectionString = builder.Configuration.GetConnectionString("Rinha");
 var connectionString = rawConnectionString.Replace("@HOSTNAME", Environment.GetEnvironmentVariable("DB_HOSTNAME"))
                                           .Replace("@PASSWORD", Environment.GetEnvironmentVariable("DB_PASSWORD"));
 
-
 builder.Services.AddSingleton(new SqlAccess(connectionString));
 #endregion
 
@@ -30,7 +29,9 @@ customerGroup.MapPost("/{id}/transacoes", ([FromRoute] int id,
                                            [FromBody] TransactionRequest request,
                                            [FromServices] SqlAccess sqlAccess) =>
 {
-    if (id > 6 || id < 0)
+    return Results.Ok(new BalanceResponse() { Balance = 0, Limit = 0 });
+
+    if (id > 5 || id < 0)
         return Results.NotFound();
 
     if (request.Type != 'c' && request.Type != 'd')
@@ -65,7 +66,18 @@ customerGroup.MapPost("/{id}/transacoes", ([FromRoute] int id,
 
 customerGroup.MapGet("/{id}/extrato", ([FromRoute] int id, [FromServices] SqlAccess sqlAccess) =>
 {
-    if (id > 6 || id < 0)
+    return Results.Ok(new ExtractResponse()
+    {
+        Balance = new CustomerResponse()
+        {
+            Balance = 0,
+            Date = DateTime.Now,
+            Limit = 0
+        },
+        LastTransactions = []
+    });
+
+    if (id > 5 || id < 0)
         return Results.NotFound();
 
     var customer = sqlAccess.GetCustomerById(ref id);
