@@ -25,12 +25,24 @@ var app = builder.Build();
 
 #region MinimalApi
 var customerGroup = app.MapGroup("/clientes");
-customerGroup.MapPost("/{id}/transacoes", ([FromRoute] int id,
-                                           [FromBody] TransactionRequest request,
-                                           [FromServices] SqlAccess sqlAccess) =>
+customerGroup.MapPost("/{id}/transacoes", async ([FromRoute] int id,
+                                           [FromServices] SqlAccess sqlAccess,
+                                           HttpRequest httpRequest) =>
 {
     if (id > 5 || id < 0)
         return Results.NotFound();
+
+    TransactionRequest request = null;
+
+    try
+    {
+        request = await httpRequest.ReadFromJsonAsync<TransactionRequest>();
+    }
+    catch
+    {
+        return Results.UnprocessableEntity();
+    }
+
 
     if (request.Type != 'c' && request.Type != 'd')
         return Results.UnprocessableEntity();
@@ -38,7 +50,7 @@ customerGroup.MapPost("/{id}/transacoes", ([FromRoute] int id,
     if (request.ValueInCents < 0)
         return Results.UnprocessableEntity();
 
-    if (request.Description is null || request.Description.Length > 10)
+    if (string.IsNullOrEmpty(request.Description) || request.Description.Length > 10)
         return Results.UnprocessableEntity();
 
     BalanceResponse response = null;
