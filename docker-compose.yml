@@ -47,22 +47,40 @@ services:
     #       memory: "60MB"
 
   db:
-    image: mcr.microsoft.com/mssql/server:2022-latest
+    image: postgres:latest
     hostname: db
-    user: root
     networks:
       - rinha-network
     environment:
-      - SA_PASSWORD=BabyDoBiruleibe123#
-      - ACCEPT_EULA=Y
-      - MSSQL_PID=Express
+      - POSTGRES_PASSWORD=BabyDoBiruleibe123#
+      - POSTGRES_USER=admin
+      - POSTGRES_DB=Rinha
     ports:
-      - "1433:1433"
+      - "5432:5432"
+    volumes:
+      - ./script.sql:/docker-entrypoint-initdb.d/script.sql
     # deploy:
     #   resources:
     #     limits:
-    #       cpus: "0.26"
-    #       memory: "2GB"
+    #       cpus: "0.13"
+    #       memory: "140MB"
+
+  dbView:
+    image: dpage/pgadmin4:latest
+    hostname: dbview
+    networks:
+      - rinha-network
+    environment:
+      - PGADMIN_DEFAULT_EMAIL=email@email.com
+      - PGADMIN_DEFAULT_PASSWORD=BabyDoBiruleibe123#
+    ports:
+      - "9090:80"
+      - "9091:443"
+    # deploy:
+    #   resources:
+    #     limits:
+    #       cpus: "0.13"
+    #       memory: "140MB"
 
 # O uso do modo `bridge` deve ser adequado à carga que será usada no teste.
 # A edição anterior se beneficiou do modo host pois o volume de requisições
