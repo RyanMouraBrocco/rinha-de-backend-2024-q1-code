@@ -13,11 +13,11 @@ services:
       - "8081:8080"
     depends_on:
       - db
-    # deploy:
-    #   resources:
-    #     limits:
-    #       cpus: "0.3"
-    #       memory: "175MB"
+    deploy:
+      resources:
+        limits:
+          cpus: "0.4"
+          memory: "60MB"
 
   api02:
     # Essa sintaxe reusa o que foi declarado em 'api01'.
@@ -40,11 +40,11 @@ services:
       - api02
     ports:
       - "9999:9999" 
-    # deploy:
-    #   resources:
-    #     limits:
-    #       cpus: "0.1"
-    #       memory: "60MB"
+    deploy:
+      resources:
+        limits:
+          cpus: "0.2"
+          memory: "30MB"
 
   db:
     image: postgres:latest
@@ -59,28 +59,11 @@ services:
       - "5432:5432"
     volumes:
       - ./script.sql:/docker-entrypoint-initdb.d/script.sql
-    # deploy:
-    #   resources:
-    #     limits:
-    #       cpus: "0.13"
-    #       memory: "140MB"
-
-  dbView:
-    image: dpage/pgadmin4:latest
-    hostname: dbview
-    networks:
-      - rinha-network
-    environment:
-      - PGADMIN_DEFAULT_EMAIL=email@email.com
-      - PGADMIN_DEFAULT_PASSWORD=BabyDoBiruleibe123#
-    ports:
-      - "9090:80"
-      - "9091:443"
-    # deploy:
-    #   resources:
-    #     limits:
-    #       cpus: "0.13"
-    #       memory: "140MB"
+    deploy:
+      resources:
+        limits:
+          cpus: "0.5"
+          memory: "400MB"
 
 # O uso do modo `bridge` deve ser adequado à carga que será usada no teste.
 # A edição anterior se beneficiou do modo host pois o volume de requisições
