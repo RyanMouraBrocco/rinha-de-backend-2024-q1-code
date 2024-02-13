@@ -9,14 +9,17 @@ namespace RinhaDeBackend2024.Api.DataAccess
     {
         private const byte CONNECTION_POOL_LEN = 50;
         private readonly NpgsqlConnection[] _connectionPool;
+        private readonly Semaphore[] _connectionLock;
         private byte _connectionSelector;
         public SqlAccess(string connectionString)
         {
             _connectionPool = new NpgsqlConnection[CONNECTION_POOL_LEN];
+            _connectionLock = new Semaphore[CONNECTION_POOL_LEN];
             bool someConnectionWorks = false;
             for (byte i = 0; i < CONNECTION_POOL_LEN; i++)
             {
                 _connectionPool[i] = new NpgsqlConnection(connectionString);
+                _connectionLock[i] = new Semaphore(1, 1);
                 while (true)
                 {
                     try
@@ -40,11 +43,12 @@ namespace RinhaDeBackend2024.Api.DataAccess
             _connectionSelector = 0;
         }
 
-        private NpgsqlConnection GetConnection()
+        private (NpgsqlConnection, Semaphore) GetConnection()
         {
             lock (_connectionPool)
             {
                 var connection = _connectionPool[_connectionSelector];
+                var connectionLock = _connectionLock[_connectionSelector];
 
                 if (_connectionPool[_connectionSelector].State != System.Data.ConnectionState.Open)
                     _connectionPool[_connectionSelector].Open();
@@ -54,25 +58,26 @@ namespace RinhaDeBackend2024.Api.DataAccess
                 else
                     _connectionSelector++;
 
-                return connection;
+                return (connection, connectionLock);
             }
         }
 
         private const string QUERY_GETCUSTOMER_BY_ID = "SELECT Id,\"Limit\",Balance FROM Customer WHERE Id=@Id;";
-        public Customer GetCustomerById(ref readonly int id)
+        public async Task<Customer> GetCustomerByIdAsync(int id)
         {
-            var connection = GetConnection();
+            var (connection, connectionLock) = GetConnection();
 
             using var command = new NpgsqlCommand(QUERY_GETCUSTOMER_BY_ID, connection);
             command.Parameters.AddWithValue("Id", id); // I belive is possible to improve performance here, because here the AddWithValue is accepting a object and could be the excat value
 
-            lock (connection)
+            try
             {
-                var result = command.ExecuteReader();
+                connectionLock.WaitOne();
+                var result = await command.ExecuteReaderAsync();
 
                 Customer customer = null;
 
-                if (result.Read())
+                if (await result.ReadAsync())
                 {
                     customer = new Customer()
                     {
@@ -82,16 +87,24 @@ namespace RinhaDeBackend2024.Api.DataAccess
                     };
                 }
 
-                result.Close();
+                await result.CloseAsync();
 
                 return customer;
+            }
+            catch
+            {
+                return null;
+            }
+            finally
+            {
+                connectionLock.Release();
             }
         }
 
         private const string QUERY_INSERT_TRANSACTION = "INSERT INTO Balance_Transaction (CustomerId,ValueInCents,IsCredit,Description,CreateDate)VALUES(@CustomerId,@ValueInCents,@IsCredit,@Description,@CreateDate);";
-        public void InsertTransaction(ref readonly int customerId, TransactionRequest transactionRequest)
+        public async Task InsertTransactionAsync(int customerId, TransactionRequest transactionRequest)
         {
-            var connection = GetConnection();
+            var (connection, connectionLock) = GetConnection();
 
             using var command = new NpgsqlCommand(QUERY_INSERT_TRANSACTION, connection);
             command.Parameters.AddWithValue("CustomerId", customerId); // I belive is possible to improve performance here, because here the AddWithValue is accepting a object and could be the excat value
@@ -100,26 +113,36 @@ namespace RinhaDeBackend2024.Api.DataAccess
             command.Parameters.AddWithValue("Description", transactionRequest.Description); // I belive is possible to improve performance here, because here the AddWithValue is accepting a object and could be the excat value
             command.Parameters.AddWithValue("CreateDate", DateTime.Now); // I belive is possible to improve performance here, because here the AddWithValue is accepting a object and could be the excat value
 
-            lock (connection)
-                _ = command.ExecuteNonQuery();
+            connectionLock.WaitOne();
+            try
+            {
+                _ = await command.ExecuteNonQueryAsync();
+            }
+            catch
+            {
+            }
+            finally
+            {
+                connectionLock.Release();
+            }
         }
 
         private const string QUERY_GET_LAST_10_TRANSACTIONS_BY_CUSTOMERID = "SELECT ValueInCents,IsCredit,Description,CreateDate FROM Balance_Transaction WHERE CustomerId=@CustomerId ORDER BY ID DESC LIMIT 10;";
-        public List<TransactionResponse> GetLast10TransactionsByCustomerId(ref readonly int customerId)
+        public async Task<List<TransactionResponse>> GetLast10TransactionsByCustomerIdAsync(int customerId)
         {
-            var connection = GetConnection();
+            var (connection, connectionLock) = GetConnection();
 
             using var command = new NpgsqlCommand(QUERY_GET_LAST_10_TRANSACTIONS_BY_CUSTOMERID, connection);
             command.Parameters.AddWithValue("CustomerId", customerId); // I belive is possible to improve performance here, because here the AddWithValue is accepting a object and could be the excat value
 
-
-            lock (connection)
+            connectionLock.WaitOne();
+            try
             {
-                var result = command.ExecuteReader();
+                var result = await command.ExecuteReaderAsync();
 
                 var transactions = new List<TransactionResponse>();
 
-                while (result.Read())
+                while (await result.ReadAsync())
                 {
                     transactions.Add(new TransactionResponse()
                     {
@@ -130,28 +153,39 @@ namespace RinhaDeBackend2024.Api.DataAccess
                     });
                 }
 
-                result.Close();
+                await result.CloseAsync();
 
                 return transactions;
             }
+            catch (Exception)
+            {
+                return null;
+            }
+            finally
+            {
+                connectionLock.Release();
+            }
+
         }
 
         private const string QUERY_DEBT_PROCEDURE = "SELECT l,b FROM Stp_DebtTransaction(@CustomerId,@Value);";
-        public BalanceResponse DiscontInDebt(ref readonly int customerId, ref readonly int value)
+        public async Task<BalanceResponse> DiscontInDebtAsync(int customerId, int value)
         {
-            var connection = GetConnection();
+            var (connection, connectionLock) = GetConnection();
 
             using var command = new NpgsqlCommand(QUERY_DEBT_PROCEDURE, connection);
             command.Parameters.AddWithValue("CustomerId", customerId); // I belive is possible to improve performance here, because here the AddWithValue is accepting a object and could be the excat value
             command.Parameters.AddWithValue("Value", value); // I belive is possible to improve performance here, because here the AddWithValue is accepting a object and could be the excat value
 
-            lock (connection)
+            connectionLock.WaitOne();
+
+            try
             {
-                var reader = command.ExecuteReader();
+                var reader = await command.ExecuteReaderAsync();
 
                 BalanceResponse response = null;
 
-                if (reader.Read())
+                if (await reader.ReadAsync())
                 {
                     response = new BalanceResponse()
                     {
@@ -159,28 +193,37 @@ namespace RinhaDeBackend2024.Api.DataAccess
                         Balance = reader.GetInt32(1)
                     };
                 }
-                reader.Close();
+                await reader.CloseAsync();
 
                 return response;
+            }
+            catch
+            {
+                return null;
+            }
+            finally
+            {
+                connectionLock.Release();
             }
         }
 
         private const string QUERY_CREDIT_PROCEDURE = "SELECT l,b FROM Stp_CreditTransaction(@CustomerId,@Value);";
-        public BalanceResponse AddInCredit(ref readonly int customerId, ref readonly int value)
+        public async Task<BalanceResponse> AddInCreditAsync(int customerId, int value)
         {
-            var connection = GetConnection();
+            var (connection, connectionLock) = GetConnection();
 
             using var command = new NpgsqlCommand(QUERY_CREDIT_PROCEDURE, connection);
             command.Parameters.AddWithValue("CustomerId", customerId); // I belive is possible to improve performance here, because here the AddWithValue is accepting a object and could be the excat value
             command.Parameters.AddWithValue("Value", value); // I belive is possible to improve performance here, because here the AddWithValue is accepting a object and could be the excat value
 
-            lock (connection)
+            connectionLock.WaitOne();
+            try
             {
-                var reader = command.ExecuteReader();
+                var reader = await command.ExecuteReaderAsync();
 
                 BalanceResponse response = null;
 
-                if (reader.Read())
+                if (await reader.ReadAsync())
                 {
                     response = new BalanceResponse()
                     {
@@ -188,9 +231,17 @@ namespace RinhaDeBackend2024.Api.DataAccess
                         Balance = reader.GetInt32(1)
                     };
                 }
-                reader.Close();
+                await reader.CloseAsync();
 
                 return response;
+            }
+            catch
+            {
+                return null;
+            }
+            finally
+            {
+                connectionLock.Release();
             }
         }
     }

@@ -58,29 +58,29 @@ customerGroup.MapPost("/{id}/transacoes", async ([FromRoute] int id,
     if (request.Type == 'c')
     {
         var value = request.ValueInCents;
-        response = sqlAccess.AddInCredit(ref id, ref value);
+        response = await sqlAccess.AddInCreditAsync(id, value);
     }
     else
     {
         var value = request.ValueInCents;
-        response = sqlAccess.DiscontInDebt(ref id, ref value);
+        response = await sqlAccess.DiscontInDebtAsync(id, value);
         if (response is null)
             return Results.UnprocessableEntity();
     }
 
-    sqlAccess.InsertTransaction(ref id, request); // this could be in parallel in a queue
+    await sqlAccess.InsertTransactionAsync(id, request); // this could be in parallel in a queue
 
     return Results.Ok(response);
 });
 
 
-customerGroup.MapGet("/{id}/extrato", ([FromRoute] int id, [FromServices] SqlAccess sqlAccess) =>
+customerGroup.MapGet("/{id}/extrato", async ([FromRoute] int id, [FromServices] SqlAccess sqlAccess) =>
 {
     if (id > 5 || id < 0)
         return Results.NotFound();
 
-    var customer = sqlAccess.GetCustomerById(ref id);
-    var transactions = sqlAccess.GetLast10TransactionsByCustomerId(ref id);
+    var customer = await sqlAccess.GetCustomerByIdAsync(id);
+    var transactions = await sqlAccess.GetLast10TransactionsByCustomerIdAsync(id);
 
     return Results.Ok(new ExtractResponse()
     {
