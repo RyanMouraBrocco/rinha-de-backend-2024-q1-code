@@ -13,11 +13,11 @@ services:
       - "8081:8080"
     depends_on:
       - db
-    # deploy:
-    #   resources:
-    #     limits:
-    #       cpus: "0.3"
-    #       memory: "175MB"
+    deploy:
+      resources:
+        limits:
+          cpus: "0.4"
+          memory: "60MB"
 
   api02:
     # Essa sintaxe reusa o que foi declarado em 'api01'.
@@ -40,29 +40,30 @@ services:
       - api02
     ports:
       - "9999:9999" 
-    # deploy:
-    #   resources:
-    #     limits:
-    #       cpus: "0.1"
-    #       memory: "60MB"
+    deploy:
+      resources:
+        limits:
+          cpus: "0.2"
+          memory: "30MB"
 
   db:
-    image: mcr.microsoft.com/mssql/server:2022-latest
+    image: postgres:latest
     hostname: db
-    user: root
     networks:
       - rinha-network
     environment:
-      - SA_PASSWORD=BabyDoBiruleibe123#
-      - ACCEPT_EULA=Y
-      - MSSQL_PID=Express
+      - POSTGRES_PASSWORD=BabyDoBiruleibe123#
+      - POSTGRES_USER=admin
+      - POSTGRES_DB=Rinha
     ports:
-      - "1433:1433"
-    # deploy:
-    #   resources:
-    #     limits:
-    #       cpus: "0.26"
-    #       memory: "2GB"
+      - "5432:5432"
+    volumes:
+      - ./script.sql:/docker-entrypoint-initdb.d/script.sql
+    deploy:
+      resources:
+        limits:
+          cpus: "0.5"
+          memory: "400MB"
 
 # O uso do modo `bridge` deve ser adequado à carga que será usada no teste.
 # A edição anterior se beneficiou do modo host pois o volume de requisições
