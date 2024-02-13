@@ -48,7 +48,6 @@ customerGroup.MapPost("/{id}/transacoes", async ([FromRoute] int id,
         return Results.UnprocessableEntity();
     }
 
-
     if (request.Type != 'c' && request.Type != 'd')
         return Results.UnprocessableEntity();
 
