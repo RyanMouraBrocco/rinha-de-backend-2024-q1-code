@@ -37,7 +37,7 @@ customerGroup.MapPost("/{id}/transacoes", async ([FromRoute] int id,
 
     try
     {
-        request = await System.Text.Json.JsonSerializer.DeserializeAsync(httpRequest.Body, AppJsonSerializerContext.Default.TransactionRequest);
+        request = await httpRequest.ReadFromJsonAsync<TransactionRequest>();
         if (request.ValueInCentsCheck % 1 != 0)
             return Results.UnprocessableEntity();
 
