@@ -7,14 +7,15 @@ namespace RinhaDeBackend2024.Api.DataAccess
 {
     public sealed class SqlAccess
     {
-        private const byte CONNECTION_POOL_LEN = 50;
+        private byte _connectionPoolLen;
         private readonly NpgsqlConnection[] _connectionPool;
         private byte _connectionSelector;
-        public SqlAccess(string connectionString)
+        public SqlAccess(string connectionString, byte connectionPoolLen)
         {
-            _connectionPool = new NpgsqlConnection[CONNECTION_POOL_LEN];
+            _connectionPoolLen = connectionPoolLen;
+            _connectionPool = new NpgsqlConnection[_connectionPoolLen];
             bool someConnectionWorks = false;
-            for (byte i = 0; i < CONNECTION_POOL_LEN; i++)
+            for (byte i = 0; i < _connectionPoolLen; i++)
             {
                 _connectionPool[i] = new NpgsqlConnection(connectionString);
                 while (true)
@@ -49,7 +50,7 @@ namespace RinhaDeBackend2024.Api.DataAccess
                 if (_connectionPool[_connectionSelector].State != System.Data.ConnectionState.Open)
                     _connectionPool[_connectionSelector].Open();
 
-                if (_connectionSelector == CONNECTION_POOL_LEN - 1)
+                if (_connectionSelector == _connectionPoolLen - 1)
                     _connectionSelector = 0;
                 else
                     _connectionSelector++;

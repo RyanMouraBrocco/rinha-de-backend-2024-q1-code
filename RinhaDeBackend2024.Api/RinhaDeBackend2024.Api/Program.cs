@@ -1,5 +1,6 @@
 using Microsoft.AspNetCore.Mvc;
 using RinhaDeBackend2024.Api;
+using RinhaDeBackend2024.Api.Background;
 using RinhaDeBackend2024.Api.Contracts.Requests;
 using RinhaDeBackend2024.Api.Contracts.Responses;
 using RinhaDeBackend2024.Api.DataAccess;
@@ -17,8 +18,10 @@ var rawConnectionString = builder.Configuration.GetConnectionString("Rinha");
 var connectionString = rawConnectionString.Replace("@HOSTNAME", Environment.GetEnvironmentVariable("DB_HOSTNAME"))
                                           .Replace("@PASSWORD", Environment.GetEnvironmentVariable("DB_PASSWORD"));
 
-builder.Services.AddSingleton(new SqlAccess(connectionString));
+builder.Services.AddSingleton(new SqlAccess(connectionString, 40));
 #endregion
+
+builder.Services.AddHostedService<TrasactionBackgroundService>();
 
 var app = builder.Build();
 
@@ -68,7 +71,7 @@ customerGroup.MapPost("/{id}/transacoes", async ([FromRoute] int id,
             return Results.UnprocessableEntity();
     }
 
-    sqlAccess.InsertTransaction(ref id, request); // this could be in parallel in a queue
+    await TrasactionBackgroundService.TransactionChannel.Writer.WriteAsync((id, request));
 
     return Results.Ok(response);
 });

@@ -2,7 +2,7 @@ version: "3.5"
 
 services:
   api01: &api
-    image: ryanmourabrocco/rinha-de-backend-2024-q1:latest
+    image: ryanmourabrocco/rinha-de-backend-2024-q1:background_test
     hostname: api01
     networks:
     - rinha-network

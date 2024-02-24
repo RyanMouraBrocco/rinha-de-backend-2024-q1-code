@@ -8,7 +8,9 @@
       "launchUrl": "todos",
       "applicationUrl": "http://localhost:6163",
       "environmentVariables": {
-        "ASPNETCORE_ENVIRONMENT": "Development"
+        "ASPNETCORE_ENVIRONMENT": "Development",
+        "DB_HOSTNAME": "localhost",
+        "DB_PASSWORD": "BabyDoBiruleibe123#"
       }
     }
   }
