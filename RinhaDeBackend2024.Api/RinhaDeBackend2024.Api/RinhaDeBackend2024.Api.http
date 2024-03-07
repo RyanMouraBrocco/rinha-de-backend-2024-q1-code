@@ -1,11 +1,18 @@
-@RinhaDeBackend2024.Api_HostAddress = http://localhost:5160
+@RinhaDeBackend2024.Api_HostAddress = http://localhost:6163
 
-GET {{RinhaDeBackend2024.Api_HostAddress}}/todos/
+POST {{RinhaDeBackend2024.Api_HostAddress}}/clientes/1/transacoes
 Accept: application/json
+Content-Type: application/json
 
+{
+  "valor": 10,
+  "tipo": "c",
+  "descricao": "teste"
+}
 ###
 
-GET {{RinhaDeBackend2024.Api_HostAddress}}/todos/1
+GET {{RinhaDeBackend2024.Api_HostAddress}}/clientes/1/extrato
 Accept: application/json
+Keep-Alive: timeout=300, max=1000
 
 ###

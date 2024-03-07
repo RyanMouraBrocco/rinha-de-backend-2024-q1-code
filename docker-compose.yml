@@ -49,6 +49,7 @@ services:
   db:
     image: postgres:latest
     hostname: db
+    command: 'postgres -c max_connections=10'
     networks:
       - rinha-network
     environment:
