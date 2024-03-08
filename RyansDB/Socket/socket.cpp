@@ -35,6 +35,11 @@ void Socket::Listen()
     }
 }
 
+int Socket::GetListener() const
+{
+    return m_socketListener;
+}
+
 int Socket::CreateSocketListenerToIpv4()
 {
     int socketListener = socket(AF_INET, SOCK_STREAM, 0);

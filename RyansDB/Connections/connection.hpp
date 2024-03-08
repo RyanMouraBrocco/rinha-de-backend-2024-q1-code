@@ -1,5 +1,6 @@
 #pragma once
 
+#include "../Socket/socket.hpp"
 #include <netdb.h>
 #include <unistd.h>
 #include <string>
@@ -15,14 +16,14 @@ enum class ConnectionStatus
 class Connection
 {
 private:
-    int &m_socketListener;
+    Socket &m_socketListener;
     sockaddr_in m_client;
     socklen_t m_clientSize = sizeof(m_client);
     int m_clientSocket;
     ConnectionStatus m_status = ConnectionStatus::Closed;
 
 public:
-    Connection(int &socketListener);
+    Connection(Socket &socketListener);
     ~Connection();
     void AcceptForNewAccess();
     ConnectionStatus GetStatus() const;

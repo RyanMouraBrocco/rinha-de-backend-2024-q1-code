@@ -1,6 +1,6 @@
 #include "connection.hpp"
 
-Connection::Connection(int &socketListener) : m_socketListener(socketListener) {}
+Connection::Connection(Socket &socketListener) : m_socketListener(socketListener) {}
 
 Connection::~Connection()
 {
@@ -10,7 +10,7 @@ Connection::~Connection()
 
 void Connection::AcceptForNewAccess()
 {
-    m_clientSocket = accept(m_socketListener, (sockaddr *)&m_client, &m_clientSize);
+    m_clientSocket = accept(m_socketListener.GetListener(), (sockaddr *)&m_client, &m_clientSize);
     if (m_clientSocket == -1)
         m_status = ConnectionStatus::Fail;
     else

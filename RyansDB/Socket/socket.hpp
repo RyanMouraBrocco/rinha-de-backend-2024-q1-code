@@ -27,4 +27,5 @@ public:
     Socket(u_int16_t port);
     ~Socket();
     void Listen();
+    int GetListener() const;
 };
