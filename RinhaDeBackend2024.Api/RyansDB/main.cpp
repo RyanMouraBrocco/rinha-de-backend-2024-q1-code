@@ -62,29 +62,8 @@ int main()
     char buf[4096];
     while (true)
     {
-        // clear the buffer
-        memset(buf, 0, 4096);
-        // Wait for a message
-        int bytesRecv = recv(clientSocket, buf, 4096, 0);
-        if (bytesRecv == -1)
-        {
-            std::cerr << "There was a connection issue" << std::endl;
-            break;
-        }
-
-        if (bytesRecv == 0)
-        {
-            std::cout << "The client disconnected" << std::endl;
-            break;
-        }
-
-        // Display message
-        std::cout << "Received " << std::string(buf, 0, bytesRecv) << std::endl;
-        // Resend message
-        send(clientSocket, buf, bytesRecv + 1, 0);
+        
     }
-    // Close the socket
-    close(clientSocket);
 
     std::cout << "hello world" << std::endl;
     return 0;

@@ -22,7 +22,31 @@ ConnectionStatus Connection::GetStatus() const
     return m_status;
 }
 
-int Connection::ReceiveBytes(char *buffer, const int &size) const
+std::string Connection::ReceiveBytes(char *buffer, const int &size) const
 {
-    
+    memset(buffer, 0, size);
+    int bytesRecv = recv(m_clientSocket, buffer, size, 0);
+
+    if (bytesRecv == -1)
+    {
+        // std::cerr << "There was a connection issue" << std::endl;
+        m_status = ConnectionStatus::Fail;
+        return nullptr;
+    }
+
+    if (bytesRecv == 0)
+    {
+        // std::cout << "The client disconnected" << std::endl;
+        m_status = ConnectionStatus::Fail;
+        return nullptr;
+    }
+
+    return std::string(buffer, 0, bytesRecv);
+}
+
+void Connection::SendBytes(char *buffer, const int &size) const
+{
+    int result = send(m_clientSocket, buffer, size + 1, 0);
+    if (result == -1)
+        m_status = ConnectionStatus::Fail;
 }

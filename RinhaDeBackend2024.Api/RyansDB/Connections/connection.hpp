@@ -2,6 +2,8 @@
 
 #include <netdb.h>
 #include <unistd.h>
+#include <string>
+#include <string.h>
 
 enum class ConnectionStatus
 {
@@ -24,6 +26,6 @@ public:
     ~Connection();
     void AcceptForNewAccess();
     ConnectionStatus GetStatus() const;
-    int ReceiveBytes(char *buffer, const int &size) const;
-    int SendBytes(char *buffer, const int &size) const;
+    std::string ReceiveBytes(char *buffer, const int &size) const;
+    void SendBytes(char *buffer, const int &size) const;
 };
