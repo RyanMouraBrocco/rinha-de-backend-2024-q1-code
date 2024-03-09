@@ -14,11 +14,16 @@
 #include <google/protobuf/wire_format.h>
 // @@protoc_insertion_point(includes)
 #include <google/protobuf/port_def.inc>
+extern PROTOBUF_INTERNAL_EXPORT_transaction_5fdto_2eproto ::PROTOBUF_NAMESPACE_ID::internal::SCCInfo<1> scc_info_TransactionDto_transaction_5fdto_2eproto;
 extern PROTOBUF_INTERNAL_EXPORT_google_2fprotobuf_2ftimestamp_2eproto ::PROTOBUF_NAMESPACE_ID::internal::SCCInfo<0> scc_info_Timestamp_google_2fprotobuf_2ftimestamp_2eproto;
 class TransactionDtoDefaultTypeInternal {
  public:
   ::PROTOBUF_NAMESPACE_ID::internal::ExplicitlyConstructed<TransactionDto> _instance;
 } _TransactionDto_default_instance_;
+class TransactionListDtoDefaultTypeInternal {
+ public:
+  ::PROTOBUF_NAMESPACE_ID::internal::ExplicitlyConstructed<TransactionListDto> _instance;
+} _TransactionListDto_default_instance_;
 static void InitDefaultsscc_info_TransactionDto_transaction_5fdto_2eproto() {
   GOOGLE_PROTOBUF_VERIFY_VERSION;
 
@@ -34,7 +39,22 @@ static void InitDefaultsscc_info_TransactionDto_transaction_5fdto_2eproto() {
     {{ATOMIC_VAR_INIT(::PROTOBUF_NAMESPACE_ID::internal::SCCInfoBase::kUninitialized), 1, 0, InitDefaultsscc_info_TransactionDto_transaction_5fdto_2eproto}, {
       &scc_info_Timestamp_google_2fprotobuf_2ftimestamp_2eproto.base,}};
 
-static ::PROTOBUF_NAMESPACE_ID::Metadata file_level_metadata_transaction_5fdto_2eproto[1];
+static void InitDefaultsscc_info_TransactionListDto_transaction_5fdto_2eproto() {
+  GOOGLE_PROTOBUF_VERIFY_VERSION;
+
+  {
+    void* ptr = &::_TransactionListDto_default_instance_;
+    new (ptr) ::TransactionListDto();
+    ::PROTOBUF_NAMESPACE_ID::internal::OnShutdownDestroyMessage(ptr);
+  }
+  ::TransactionListDto::InitAsDefaultInstance();
+}
+
+::PROTOBUF_NAMESPACE_ID::internal::SCCInfo<1> scc_info_TransactionListDto_transaction_5fdto_2eproto =
+    {{ATOMIC_VAR_INIT(::PROTOBUF_NAMESPACE_ID::internal::SCCInfoBase::kUninitialized), 1, 0, InitDefaultsscc_info_TransactionListDto_transaction_5fdto_2eproto}, {
+      &scc_info_TransactionDto_transaction_5fdto_2eproto.base,}};
+
+static ::PROTOBUF_NAMESPACE_ID::Metadata file_level_metadata_transaction_5fdto_2eproto[2];
 static constexpr ::PROTOBUF_NAMESPACE_ID::EnumDescriptor const** file_level_enum_descriptors_transaction_5fdto_2eproto = nullptr;
 static constexpr ::PROTOBUF_NAMESPACE_ID::ServiceDescriptor const** file_level_service_descriptors_transaction_5fdto_2eproto = nullptr;
 
@@ -48,13 +68,21 @@ const ::PROTOBUF_NAMESPACE_ID::uint32 TableStruct_transaction_5fdto_2eproto::off
   PROTOBUF_FIELD_OFFSET(::TransactionDto, iscredit_),
   PROTOBUF_FIELD_OFFSET(::TransactionDto, description_),
   PROTOBUF_FIELD_OFFSET(::TransactionDto, createdate_),
+  ~0u,  // no _has_bits_
+  PROTOBUF_FIELD_OFFSET(::TransactionListDto, _internal_metadata_),
+  ~0u,  // no _extensions_
+  ~0u,  // no _oneof_case_
+  ~0u,  // no _weak_field_map_
+  PROTOBUF_FIELD_OFFSET(::TransactionListDto, transactions_),
 };
 static const ::PROTOBUF_NAMESPACE_ID::internal::MigrationSchema schemas[] PROTOBUF_SECTION_VARIABLE(protodesc_cold) = {
   { 0, -1, sizeof(::TransactionDto)},
+  { 9, -1, sizeof(::TransactionListDto)},
 };
 
 static ::PROTOBUF_NAMESPACE_ID::Message const * const file_default_instances[] = {
   reinterpret_cast<const ::PROTOBUF_NAMESPACE_ID::Message*>(&::_TransactionDto_default_instance_),
+  reinterpret_cast<const ::PROTOBUF_NAMESPACE_ID::Message*>(&::_TransactionListDto_default_instance_),
 };
 
 const char descriptor_table_protodef_transaction_5fdto_2eproto[] PROTOBUF_SECTION_VARIABLE(protodesc_cold) =
@@ -62,20 +90,23 @@ const char descriptor_table_protodef_transaction_5fdto_2eproto[] PROTOBUF_SECTIO
   "/timestamp.proto\"v\n\016TransactionDto\022\r\n\005va"
   "lue\030\001 \001(\005\022\020\n\010isCredit\030\002 \001(\010\022\023\n\013descripti"
   "on\030\003 \001(\t\022.\n\ncreateDate\030\004 \001(\0132\032.google.pr"
-  "otobuf.Timestampb\006proto3"
+  "otobuf.Timestamp\";\n\022TransactionListDto\022%"
+  "\n\014transactions\030\001 \003(\0132\017.TransactionDtob\006p"
+  "roto3"
   ;
 static const ::PROTOBUF_NAMESPACE_ID::internal::DescriptorTable*const descriptor_table_transaction_5fdto_2eproto_deps[1] = {
   &::descriptor_table_google_2fprotobuf_2ftimestamp_2eproto,
 };
-static ::PROTOBUF_NAMESPACE_ID::internal::SCCInfoBase*const descriptor_table_transaction_5fdto_2eproto_sccs[1] = {
+static ::PROTOBUF_NAMESPACE_ID::internal::SCCInfoBase*const descriptor_table_transaction_5fdto_2eproto_sccs[2] = {
   &scc_info_TransactionDto_transaction_5fdto_2eproto.base,
+  &scc_info_TransactionListDto_transaction_5fdto_2eproto.base,
 };
 static ::PROTOBUF_NAMESPACE_ID::internal::once_flag descriptor_table_transaction_5fdto_2eproto_once;
 const ::PROTOBUF_NAMESPACE_ID::internal::DescriptorTable descriptor_table_transaction_5fdto_2eproto = {
-  false, false, descriptor_table_protodef_transaction_5fdto_2eproto, "transaction_dto.proto", 184,
-  &descriptor_table_transaction_5fdto_2eproto_once, descriptor_table_transaction_5fdto_2eproto_sccs, descriptor_table_transaction_5fdto_2eproto_deps, 1, 1,
+  false, false, descriptor_table_protodef_transaction_5fdto_2eproto, "transaction_dto.proto", 245,
+  &descriptor_table_transaction_5fdto_2eproto_once, descriptor_table_transaction_5fdto_2eproto_sccs, descriptor_table_transaction_5fdto_2eproto_deps, 2, 1,
   schemas, file_default_instances, TableStruct_transaction_5fdto_2eproto::offsets,
-  file_level_metadata_transaction_5fdto_2eproto, 1, file_level_enum_descriptors_transaction_5fdto_2eproto, file_level_service_descriptors_transaction_5fdto_2eproto,
+  file_level_metadata_transaction_5fdto_2eproto, 2, file_level_enum_descriptors_transaction_5fdto_2eproto, file_level_service_descriptors_transaction_5fdto_2eproto,
 };
 
 // Force running AddDescriptors() at dynamic initialization time.
@@ -397,10 +428,216 @@ void TransactionDto::InternalSwap(TransactionDto* other) {
 }
 
 
+// ===================================================================
+
+void TransactionListDto::InitAsDefaultInstance() {
+}
+class TransactionListDto::_Internal {
+ public:
+};
+
+TransactionListDto::TransactionListDto(::PROTOBUF_NAMESPACE_ID::Arena* arena)
+  : ::PROTOBUF_NAMESPACE_ID::Message(arena),
+  transactions_(arena) {
+  SharedCtor();
+  RegisterArenaDtor(arena);
+  // @@protoc_insertion_point(arena_constructor:TransactionListDto)
+}
+TransactionListDto::TransactionListDto(const TransactionListDto& from)
+  : ::PROTOBUF_NAMESPACE_ID::Message(),
+      transactions_(from.transactions_) {
+  _internal_metadata_.MergeFrom<::PROTOBUF_NAMESPACE_ID::UnknownFieldSet>(from._internal_metadata_);
+  // @@protoc_insertion_point(copy_constructor:TransactionListDto)
+}
+
+void TransactionListDto::SharedCtor() {
+  ::PROTOBUF_NAMESPACE_ID::internal::InitSCC(&scc_info_TransactionListDto_transaction_5fdto_2eproto.base);
+}
+
+TransactionListDto::~TransactionListDto() {
+  // @@protoc_insertion_point(destructor:TransactionListDto)
+  SharedDtor();
+  _internal_metadata_.Delete<::PROTOBUF_NAMESPACE_ID::UnknownFieldSet>();
+}
+
+void TransactionListDto::SharedDtor() {
+  GOOGLE_DCHECK(GetArena() == nullptr);
+}
+
+void TransactionListDto::ArenaDtor(void* object) {
+  TransactionListDto* _this = reinterpret_cast< TransactionListDto* >(object);
+  (void)_this;
+}
+void TransactionListDto::RegisterArenaDtor(::PROTOBUF_NAMESPACE_ID::Arena*) {
+}
+void TransactionListDto::SetCachedSize(int size) const {
+  _cached_size_.Set(size);
+}
+const TransactionListDto& TransactionListDto::default_instance() {
+  ::PROTOBUF_NAMESPACE_ID::internal::InitSCC(&::scc_info_TransactionListDto_transaction_5fdto_2eproto.base);
+  return *internal_default_instance();
+}
+
+
+void TransactionListDto::Clear() {
+// @@protoc_insertion_point(message_clear_start:TransactionListDto)
+  ::PROTOBUF_NAMESPACE_ID::uint32 cached_has_bits = 0;
+  // Prevent compiler warnings about cached_has_bits being unused
+  (void) cached_has_bits;
+
+  transactions_.Clear();
+  _internal_metadata_.Clear<::PROTOBUF_NAMESPACE_ID::UnknownFieldSet>();
+}
+
+const char* TransactionListDto::_InternalParse(const char* ptr, ::PROTOBUF_NAMESPACE_ID::internal::ParseContext* ctx) {
+#define CHK_(x) if (PROTOBUF_PREDICT_FALSE(!(x))) goto failure
+  ::PROTOBUF_NAMESPACE_ID::Arena* arena = GetArena(); (void)arena;
+  while (!ctx->Done(&ptr)) {
+    ::PROTOBUF_NAMESPACE_ID::uint32 tag;
+    ptr = ::PROTOBUF_NAMESPACE_ID::internal::ReadTag(ptr, &tag);
+    CHK_(ptr);
+    switch (tag >> 3) {
+      // repeated .TransactionDto transactions = 1;
+      case 1:
+        if (PROTOBUF_PREDICT_TRUE(static_cast<::PROTOBUF_NAMESPACE_ID::uint8>(tag) == 10)) {
+          ptr -= 1;
+          do {
+            ptr += 1;
+            ptr = ctx->ParseMessage(_internal_add_transactions(), ptr);
+            CHK_(ptr);
+            if (!ctx->DataAvailable(ptr)) break;
+          } while (::PROTOBUF_NAMESPACE_ID::internal::ExpectTag<10>(ptr));
+        } else goto handle_unusual;
+        continue;
+      default: {
+      handle_unusual:
+        if ((tag & 7) == 4 || tag == 0) {
+          ctx->SetLastTag(tag);
+          goto success;
+        }
+        ptr = UnknownFieldParse(tag,
+            _internal_metadata_.mutable_unknown_fields<::PROTOBUF_NAMESPACE_ID::UnknownFieldSet>(),
+            ptr, ctx);
+        CHK_(ptr != nullptr);
+        continue;
+      }
+    }  // switch
+  }  // while
+success:
+  return ptr;
+failure:
+  ptr = nullptr;
+  goto success;
+#undef CHK_
+}
+
+::PROTOBUF_NAMESPACE_ID::uint8* TransactionListDto::_InternalSerialize(
+    ::PROTOBUF_NAMESPACE_ID::uint8* target, ::PROTOBUF_NAMESPACE_ID::io::EpsCopyOutputStream* stream) const {
+  // @@protoc_insertion_point(serialize_to_array_start:TransactionListDto)
+  ::PROTOBUF_NAMESPACE_ID::uint32 cached_has_bits = 0;
+  (void) cached_has_bits;
+
+  // repeated .TransactionDto transactions = 1;
+  for (unsigned int i = 0,
+      n = static_cast<unsigned int>(this->_internal_transactions_size()); i < n; i++) {
+    target = stream->EnsureSpace(target);
+    target = ::PROTOBUF_NAMESPACE_ID::internal::WireFormatLite::
+      InternalWriteMessage(1, this->_internal_transactions(i), target, stream);
+  }
+
+  if (PROTOBUF_PREDICT_FALSE(_internal_metadata_.have_unknown_fields())) {
+    target = ::PROTOBUF_NAMESPACE_ID::internal::WireFormat::InternalSerializeUnknownFieldsToArray(
+        _internal_metadata_.unknown_fields<::PROTOBUF_NAMESPACE_ID::UnknownFieldSet>(::PROTOBUF_NAMESPACE_ID::UnknownFieldSet::default_instance), target, stream);
+  }
+  // @@protoc_insertion_point(serialize_to_array_end:TransactionListDto)
+  return target;
+}
+
+size_t TransactionListDto::ByteSizeLong() const {
+// @@protoc_insertion_point(message_byte_size_start:TransactionListDto)
+  size_t total_size = 0;
+
+  ::PROTOBUF_NAMESPACE_ID::uint32 cached_has_bits = 0;
+  // Prevent compiler warnings about cached_has_bits being unused
+  (void) cached_has_bits;
+
+  // repeated .TransactionDto transactions = 1;
+  total_size += 1UL * this->_internal_transactions_size();
+  for (const auto& msg : this->transactions_) {
+    total_size +=
+      ::PROTOBUF_NAMESPACE_ID::internal::WireFormatLite::MessageSize(msg);
+  }
+
+  if (PROTOBUF_PREDICT_FALSE(_internal_metadata_.have_unknown_fields())) {
+    return ::PROTOBUF_NAMESPACE_ID::internal::ComputeUnknownFieldsSize(
+        _internal_metadata_, total_size, &_cached_size_);
+  }
+  int cached_size = ::PROTOBUF_NAMESPACE_ID::internal::ToCachedSize(total_size);
+  SetCachedSize(cached_size);
+  return total_size;
+}
+
+void TransactionListDto::MergeFrom(const ::PROTOBUF_NAMESPACE_ID::Message& from) {
+// @@protoc_insertion_point(generalized_merge_from_start:TransactionListDto)
+  GOOGLE_DCHECK_NE(&from, this);
+  const TransactionListDto* source =
+      ::PROTOBUF_NAMESPACE_ID::DynamicCastToGenerated<TransactionListDto>(
+          &from);
+  if (source == nullptr) {
+  // @@protoc_insertion_point(generalized_merge_from_cast_fail:TransactionListDto)
+    ::PROTOBUF_NAMESPACE_ID::internal::ReflectionOps::Merge(from, this);
+  } else {
+  // @@protoc_insertion_point(generalized_merge_from_cast_success:TransactionListDto)
+    MergeFrom(*source);
+  }
+}
+
+void TransactionListDto::MergeFrom(const TransactionListDto& from) {
+// @@protoc_insertion_point(class_specific_merge_from_start:TransactionListDto)
+  GOOGLE_DCHECK_NE(&from, this);
+  _internal_metadata_.MergeFrom<::PROTOBUF_NAMESPACE_ID::UnknownFieldSet>(from._internal_metadata_);
+  ::PROTOBUF_NAMESPACE_ID::uint32 cached_has_bits = 0;
+  (void) cached_has_bits;
+
+  transactions_.MergeFrom(from.transactions_);
+}
+
+void TransactionListDto::CopyFrom(const ::PROTOBUF_NAMESPACE_ID::Message& from) {
+// @@protoc_insertion_point(generalized_copy_from_start:TransactionListDto)
+  if (&from == this) return;
+  Clear();
+  MergeFrom(from);
+}
+
+void TransactionListDto::CopyFrom(const TransactionListDto& from) {
+// @@protoc_insertion_point(class_specific_copy_from_start:TransactionListDto)
+  if (&from == this) return;
+  Clear();
+  MergeFrom(from);
+}
+
+bool TransactionListDto::IsInitialized() const {
+  return true;
+}
+
+void TransactionListDto::InternalSwap(TransactionListDto* other) {
+  using std::swap;
+  _internal_metadata_.Swap<::PROTOBUF_NAMESPACE_ID::UnknownFieldSet>(&other->_internal_metadata_);
+  transactions_.InternalSwap(&other->transactions_);
+}
+
+::PROTOBUF_NAMESPACE_ID::Metadata TransactionListDto::GetMetadata() const {
+  return GetMetadataStatic();
+}
+
+
 // @@protoc_insertion_point(namespace_scope)
 PROTOBUF_NAMESPACE_OPEN
 template<> PROTOBUF_NOINLINE ::TransactionDto* Arena::CreateMaybeMessage< ::TransactionDto >(Arena* arena) {
   return Arena::CreateMessageInternal< ::TransactionDto >(arena);
+}
+template<> PROTOBUF_NOINLINE ::TransactionListDto* Arena::CreateMaybeMessage< ::TransactionListDto >(Arena* arena) {
+  return Arena::CreateMessageInternal< ::TransactionListDto >(arena);
 }
 PROTOBUF_NAMESPACE_CLOSE
 

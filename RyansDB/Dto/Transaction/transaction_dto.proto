@@ -7,3 +7,7 @@ message TransactionDto {
     string description = 3;
     google.protobuf.Timestamp createDate = 4;
 }
+
+message TransactionListDto {
+  repeated TransactionDto transactions = 1;
+}

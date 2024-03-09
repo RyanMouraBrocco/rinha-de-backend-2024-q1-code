@@ -48,7 +48,7 @@ struct TableStruct_transaction_5fdto_2eproto {
     PROTOBUF_SECTION_VARIABLE(protodesc_cold);
   static const ::PROTOBUF_NAMESPACE_ID::internal::AuxillaryParseTableField aux[]
     PROTOBUF_SECTION_VARIABLE(protodesc_cold);
-  static const ::PROTOBUF_NAMESPACE_ID::internal::ParseTable schema[1]
+  static const ::PROTOBUF_NAMESPACE_ID::internal::ParseTable schema[2]
     PROTOBUF_SECTION_VARIABLE(protodesc_cold);
   static const ::PROTOBUF_NAMESPACE_ID::internal::FieldMetadata field_metadata[];
   static const ::PROTOBUF_NAMESPACE_ID::internal::SerializationTable serialization_table[];
@@ -58,8 +58,12 @@ extern const ::PROTOBUF_NAMESPACE_ID::internal::DescriptorTable descriptor_table
 class TransactionDto;
 class TransactionDtoDefaultTypeInternal;
 extern TransactionDtoDefaultTypeInternal _TransactionDto_default_instance_;
+class TransactionListDto;
+class TransactionListDtoDefaultTypeInternal;
+extern TransactionListDtoDefaultTypeInternal _TransactionListDto_default_instance_;
 PROTOBUF_NAMESPACE_OPEN
 template<> ::TransactionDto* Arena::CreateMaybeMessage<::TransactionDto>(Arena*);
+template<> ::TransactionListDto* Arena::CreateMaybeMessage<::TransactionListDto>(Arena*);
 PROTOBUF_NAMESPACE_CLOSE
 
 // ===================================================================
@@ -254,6 +258,152 @@ class TransactionDto PROTOBUF_FINAL :
   PROTOBUF_NAMESPACE_ID::Timestamp* createdate_;
   ::PROTOBUF_NAMESPACE_ID::int32 value_;
   bool iscredit_;
+  mutable ::PROTOBUF_NAMESPACE_ID::internal::CachedSize _cached_size_;
+  friend struct ::TableStruct_transaction_5fdto_2eproto;
+};
+// -------------------------------------------------------------------
+
+class TransactionListDto PROTOBUF_FINAL :
+    public ::PROTOBUF_NAMESPACE_ID::Message /* @@protoc_insertion_point(class_definition:TransactionListDto) */ {
+ public:
+  inline TransactionListDto() : TransactionListDto(nullptr) {};
+  virtual ~TransactionListDto();
+
+  TransactionListDto(const TransactionListDto& from);
+  TransactionListDto(TransactionListDto&& from) noexcept
+    : TransactionListDto() {
+    *this = ::std::move(from);
+  }
+
+  inline TransactionListDto& operator=(const TransactionListDto& from) {
+    CopyFrom(from);
+    return *this;
+  }
+  inline TransactionListDto& operator=(TransactionListDto&& from) noexcept {
+    if (GetArena() == from.GetArena()) {
+      if (this != &from) InternalSwap(&from);
+    } else {
+      CopyFrom(from);
+    }
+    return *this;
+  }
+
+  static const ::PROTOBUF_NAMESPACE_ID::Descriptor* descriptor() {
+    return GetDescriptor();
+  }
+  static const ::PROTOBUF_NAMESPACE_ID::Descriptor* GetDescriptor() {
+    return GetMetadataStatic().descriptor;
+  }
+  static const ::PROTOBUF_NAMESPACE_ID::Reflection* GetReflection() {
+    return GetMetadataStatic().reflection;
+  }
+  static const TransactionListDto& default_instance();
+
+  static void InitAsDefaultInstance();  // FOR INTERNAL USE ONLY
+  static inline const TransactionListDto* internal_default_instance() {
+    return reinterpret_cast<const TransactionListDto*>(
+               &_TransactionListDto_default_instance_);
+  }
+  static constexpr int kIndexInFileMessages =
+    1;
+
+  friend void swap(TransactionListDto& a, TransactionListDto& b) {
+    a.Swap(&b);
+  }
+  inline void Swap(TransactionListDto* other) {
+    if (other == this) return;
+    if (GetArena() == other->GetArena()) {
+      InternalSwap(other);
+    } else {
+      ::PROTOBUF_NAMESPACE_ID::internal::GenericSwap(this, other);
+    }
+  }
+  void UnsafeArenaSwap(TransactionListDto* other) {
+    if (other == this) return;
+    GOOGLE_DCHECK(GetArena() == other->GetArena());
+    InternalSwap(other);
+  }
+
+  // implements Message ----------------------------------------------
+
+  inline TransactionListDto* New() const final {
+    return CreateMaybeMessage<TransactionListDto>(nullptr);
+  }
+
+  TransactionListDto* New(::PROTOBUF_NAMESPACE_ID::Arena* arena) const final {
+    return CreateMaybeMessage<TransactionListDto>(arena);
+  }
+  void CopyFrom(const ::PROTOBUF_NAMESPACE_ID::Message& from) final;
+  void MergeFrom(const ::PROTOBUF_NAMESPACE_ID::Message& from) final;
+  void CopyFrom(const TransactionListDto& from);
+  void MergeFrom(const TransactionListDto& from);
+  PROTOBUF_ATTRIBUTE_REINITIALIZES void Clear() final;
+  bool IsInitialized() const final;
+
+  size_t ByteSizeLong() const final;
+  const char* _InternalParse(const char* ptr, ::PROTOBUF_NAMESPACE_ID::internal::ParseContext* ctx) final;
+  ::PROTOBUF_NAMESPACE_ID::uint8* _InternalSerialize(
+      ::PROTOBUF_NAMESPACE_ID::uint8* target, ::PROTOBUF_NAMESPACE_ID::io::EpsCopyOutputStream* stream) const final;
+  int GetCachedSize() const final { return _cached_size_.Get(); }
+
+  private:
+  inline void SharedCtor();
+  inline void SharedDtor();
+  void SetCachedSize(int size) const final;
+  void InternalSwap(TransactionListDto* other);
+  friend class ::PROTOBUF_NAMESPACE_ID::internal::AnyMetadata;
+  static ::PROTOBUF_NAMESPACE_ID::StringPiece FullMessageName() {
+    return "TransactionListDto";
+  }
+  protected:
+  explicit TransactionListDto(::PROTOBUF_NAMESPACE_ID::Arena* arena);
+  private:
+  static void ArenaDtor(void* object);
+  inline void RegisterArenaDtor(::PROTOBUF_NAMESPACE_ID::Arena* arena);
+  public:
+
+  ::PROTOBUF_NAMESPACE_ID::Metadata GetMetadata() const final;
+  private:
+  static ::PROTOBUF_NAMESPACE_ID::Metadata GetMetadataStatic() {
+    ::PROTOBUF_NAMESPACE_ID::internal::AssignDescriptors(&::descriptor_table_transaction_5fdto_2eproto);
+    return ::descriptor_table_transaction_5fdto_2eproto.file_level_metadata[kIndexInFileMessages];
+  }
+
+  public:
+
+  // nested types ----------------------------------------------------
+
+  // accessors -------------------------------------------------------
+
+  enum : int {
+    kTransactionsFieldNumber = 1,
+  };
+  // repeated .TransactionDto transactions = 1;
+  int transactions_size() const;
+  private:
+  int _internal_transactions_size() const;
+  public:
+  void clear_transactions();
+  ::TransactionDto* mutable_transactions(int index);
+  ::PROTOBUF_NAMESPACE_ID::RepeatedPtrField< ::TransactionDto >*
+      mutable_transactions();
+  private:
+  const ::TransactionDto& _internal_transactions(int index) const;
+  ::TransactionDto* _internal_add_transactions();
+  public:
+  const ::TransactionDto& transactions(int index) const;
+  ::TransactionDto* add_transactions();
+  const ::PROTOBUF_NAMESPACE_ID::RepeatedPtrField< ::TransactionDto >&
+      transactions() const;
+
+  // @@protoc_insertion_point(class_scope:TransactionListDto)
+ private:
+  class _Internal;
+
+  template <typename T> friend class ::PROTOBUF_NAMESPACE_ID::Arena::InternalHelper;
+  typedef void InternalArenaConstructable_;
+  typedef void DestructorSkippable_;
+  ::PROTOBUF_NAMESPACE_ID::RepeatedPtrField< ::TransactionDto > transactions_;
   mutable ::PROTOBUF_NAMESPACE_ID::internal::CachedSize _cached_size_;
   friend struct ::TableStruct_transaction_5fdto_2eproto;
 };
@@ -464,9 +614,54 @@ inline void TransactionDto::set_allocated_createdate(PROTOBUF_NAMESPACE_ID::Time
   // @@protoc_insertion_point(field_set_allocated:TransactionDto.createDate)
 }
 
+// -------------------------------------------------------------------
+
+// TransactionListDto
+
+// repeated .TransactionDto transactions = 1;
+inline int TransactionListDto::_internal_transactions_size() const {
+  return transactions_.size();
+}
+inline int TransactionListDto::transactions_size() const {
+  return _internal_transactions_size();
+}
+inline void TransactionListDto::clear_transactions() {
+  transactions_.Clear();
+}
+inline ::TransactionDto* TransactionListDto::mutable_transactions(int index) {
+  // @@protoc_insertion_point(field_mutable:TransactionListDto.transactions)
+  return transactions_.Mutable(index);
+}
+inline ::PROTOBUF_NAMESPACE_ID::RepeatedPtrField< ::TransactionDto >*
+TransactionListDto::mutable_transactions() {
+  // @@protoc_insertion_point(field_mutable_list:TransactionListDto.transactions)
+  return &transactions_;
+}
+inline const ::TransactionDto& TransactionListDto::_internal_transactions(int index) const {
+  return transactions_.Get(index);
+}
+inline const ::TransactionDto& TransactionListDto::transactions(int index) const {
+  // @@protoc_insertion_point(field_get:TransactionListDto.transactions)
+  return _internal_transactions(index);
+}
+inline ::TransactionDto* TransactionListDto::_internal_add_transactions() {
+  return transactions_.Add();
+}
+inline ::TransactionDto* TransactionListDto::add_transactions() {
+  // @@protoc_insertion_point(field_add:TransactionListDto.transactions)
+  return _internal_add_transactions();
+}
+inline const ::PROTOBUF_NAMESPACE_ID::RepeatedPtrField< ::TransactionDto >&
+TransactionListDto::transactions() const {
+  // @@protoc_insertion_point(field_list:TransactionListDto.transactions)
+  return transactions_;
+}
+
 #ifdef __GNUC__
   #pragma GCC diagnostic pop
 #endif  // __GNUC__
+// -------------------------------------------------------------------
+
 
 // @@protoc_insertion_point(namespace_scope)
 
