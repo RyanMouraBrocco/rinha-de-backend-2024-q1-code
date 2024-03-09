@@ -5,22 +5,8 @@
 #include "Dto/Customer/customer_dto.pb.h"
 #include "Dto/Transaction/transaction_dto.pb.h"
 #include "Data/customer_data.hpp"
-#include "nlohmann/json.hpp"
-
-struct Message
-{
-    std::string endpoint;
-    std::string data;
-};
-
-Message DeserializeStringToMessage(const std::string &jsonString)
-{
-    nlohmann::json jsonObject = nlohmann::json::parse(jsonString);
-    Message message;
-    message.endpoint = jsonObject["e"];
-    message.data = jsonObject["d"];
-    return message;
-}
+#include "Data/transaction_data.hpp"
+#include "Commands/commands.hpp"
 
 int main()
 {
@@ -35,6 +21,7 @@ int main()
     connection.AcceptForNewAccess();
 
     char buf[4096];
+    std::string notFoundMessage = "NotFound";
     while (true)
     {
         std::string text = connection.ReceiveBytes(4096);
@@ -42,10 +29,97 @@ int main()
         if (connection.GetStatus() != ConnectionStatus::Connected)
             break;
 
-        Message message = DeserializeStringToMessage(text);
-        std::cout << "Message: " << message.endpoint << " with data: " << message.data << std::endl;
+        MessageCommand message = MessageCommand::DeserializeJson(text);
 
-        connection.SendBytes(text.data(), sizeof(text) + 1);
+        if (message.endpoint == "GetCustomersWithJoinInTransactions")
+        {
+            GetCustomerWithJoinInTransactionsCommand getObject = GetCustomerWithJoinInTransactionsCommand::DeserializeJson(message.data);
+            CustomerDataAccess customerDataAcces = CustomerDataAccess();
+            CustomerDto customer = customerDataAcces.Read(getObject.id);
+
+            TransactionDataAccess transactionDataAccess = TransactionDataAccess();
+            std::queue<TransactionDto> list = transactionDataAccess.Read(getObject.id);
+
+            // create return of json here
+        }
+        else if (message.endpoint == "CreditTransaction")
+        {
+            CreditTransactionCommand creditTransaction = CreditTransactionCommand::DeserializeJson(message.data);
+            CustomerDataAccess customerDataAcces = CustomerDataAccess();
+            TransactionDataAccess transactionDataAccess = TransactionDataAccess();
+
+            CustomerDto customer = customerDataAcces.Read(creditTransaction.id);
+            customer.set_balance(customer.balance() + creditTransaction.balance);
+            customerDataAcces.Save(creditTransaction.id, customer);
+
+            TransactionDto newTransaction = TransactionDto();
+            newTransaction.set_description(creditTransaction.description);
+            newTransaction.set_iscredit(true);
+            newTransaction.set_value(creditTransaction.balance);
+            // Get the current time
+            auto now = std::chrono::system_clock::now();
+            auto seconds = std::chrono::time_point_cast<std::chrono::seconds>(now);
+            auto nanoseconds = std::chrono::duration_cast<std::chrono::nanoseconds>(now - seconds);
+
+            // Create a timestamp object and set its fields
+            google::protobuf::Timestamp *timestamp = new google::protobuf::Timestamp();
+            timestamp->set_seconds(std::chrono::duration_cast<std::chrono::seconds>(now.time_since_epoch()).count());
+            timestamp->set_nanos(nanoseconds.count());
+
+            // Set the timestamp field in the message
+            newTransaction.set_allocated_createdate(timestamp);
+
+            std::queue<TransactionDto> transactions = transactionDataAccess.Read(creditTransaction.id);
+            transactions.push(newTransaction);
+            while (transactions.size() > 10)
+                transactions.pop();
+
+            // Return success here
+        }
+        else if (message.endpoint == "DebtTransaction")
+        {
+            DebtTransactionCommand debtTransaction = DebtTransactionCommand::DeserializeJson(message.data);
+            CustomerDataAccess customerDataAcces = CustomerDataAccess();
+            TransactionDataAccess transactionDataAccess = TransactionDataAccess();
+
+            CustomerDto customer = customerDataAcces.Read(debtTransaction.id);
+            int finalBalance = customer.balance() - debtTransaction.balance;
+            if (finalBalance < -customer.limit())
+            {
+                // Return error here
+            }
+            else
+            {
+                customer.set_balance(finalBalance);
+                customerDataAcces.Save(debtTransaction.id, customer);
+
+                TransactionDto newTransaction = TransactionDto();
+                newTransaction.set_description(debtTransaction.description);
+                newTransaction.set_iscredit(false);
+                newTransaction.set_value(debtTransaction.balance);
+                // Get the current time
+                auto now = std::chrono::system_clock::now();
+                auto seconds = std::chrono::time_point_cast<std::chrono::seconds>(now);
+                auto nanoseconds = std::chrono::duration_cast<std::chrono::nanoseconds>(now - seconds);
+
+                // Create a timestamp object and set its fields
+                google::protobuf::Timestamp *timestamp = new google::protobuf::Timestamp();
+                timestamp->set_seconds(std::chrono::duration_cast<std::chrono::seconds>(now.time_since_epoch()).count());
+                timestamp->set_nanos(nanoseconds.count());
+
+                // Set the timestamp field in the message
+                newTransaction.set_allocated_createdate(timestamp);
+
+                std::queue<TransactionDto> transactions = transactionDataAccess.Read(debtTransaction.id);
+                transactions.push(newTransaction);
+                while (transactions.size() > 10)
+                    transactions.pop();
+
+                // Return success here
+            }
+        }
+        else
+            connection.SendBytes(notFoundMessage.data(), 9);
     }
 
     return 0;
