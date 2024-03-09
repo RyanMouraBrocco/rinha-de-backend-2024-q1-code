@@ -7,6 +7,7 @@
 #include "Data/customer_data.hpp"
 #include "Data/transaction_data.hpp"
 #include "Commands/commands.hpp"
+#include "Results/resutls.hpp"
 
 int main()
 {
@@ -22,6 +23,7 @@ int main()
 
     char buf[4096];
     std::string notFoundMessage = "NotFound";
+    std::string invalidOperationMessage = "InvalidOp";
     while (true)
     {
         std::string text = connection.ReceiveBytes(4096);
@@ -38,9 +40,17 @@ int main()
             CustomerDto customer = customerDataAcces.Read(getObject.id);
 
             TransactionDataAccess transactionDataAccess = TransactionDataAccess();
-            std::queue<TransactionDto> list = transactionDataAccess.Read(getObject.id);
+            std::queue<TransactionDto> queue = transactionDataAccess.Read(getObject.id);
 
-            // create return of json here
+            connection.SendBytes(notFoundMessage.data(), 9);
+
+            GetCustomerWithJoinInTransactionsResult result;
+            result.customer = &customer;
+            result.transactions = &queue;
+
+            std::string jsonResult = result.SerializeJson();
+            char *resultInCharArray = jsonResult.data();
+            connection.SendBytes(resultInCharArray, sizeof(char) * jsonResult.length());
         }
         else if (message.endpoint == "CreditTransaction")
         {
@@ -74,7 +84,14 @@ int main()
             while (transactions.size() > 10)
                 transactions.pop();
 
-            // Return success here
+            transactionDataAccess.Save(creditTransaction.id, transactions);
+
+            CreditTransactionResult result;
+            result.customer = &customer;
+
+            std::string jsonResult = result.SerializeJson();
+            char *resultInCharArray = jsonResult.data();
+            connection.SendBytes(resultInCharArray, sizeof(char) * jsonResult.length());
         }
         else if (message.endpoint == "DebtTransaction")
         {
@@ -86,7 +103,7 @@ int main()
             int finalBalance = customer.balance() - debtTransaction.balance;
             if (finalBalance < -customer.limit())
             {
-                // Return error here
+                connection.SendBytes(invalidOperationMessage.data(), 9);
             }
             else
             {
@@ -115,7 +132,13 @@ int main()
                 while (transactions.size() > 10)
                     transactions.pop();
 
-                // Return success here
+                transactionDataAccess.Save(debtTransaction.id, transactions);
+                DebtTransactionResult result;
+                result.customer = &customer;
+
+                std::string jsonResult = result.SerializeJson();
+                char *resultInCharArray = jsonResult.data();
+                connection.SendBytes(resultInCharArray, sizeof(char) * jsonResult.length());
             }
         }
         else
