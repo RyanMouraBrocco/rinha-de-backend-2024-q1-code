@@ -57,7 +57,11 @@
         "stop_token": "cpp",
         "streambuf": "cpp",
         "thread": "cpp",
-        "typeinfo": "cpp"
+        "typeinfo": "cpp",
+        "codecvt": "cpp",
+        "iomanip": "cpp",
+        "sstream": "cpp",
+        "filesystem": "cpp"
     },
     "cmake.sourceDirectory": "/home/ryanbrocco/rinha-de-backend-2024-q1/RyansDB"
 }

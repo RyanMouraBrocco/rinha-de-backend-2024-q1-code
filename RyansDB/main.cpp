@@ -4,12 +4,10 @@
 #include "Connections/connection.hpp"
 #include "Dto/Customer/customer_dto.pb.h"
 #include "Dto/Transaction/transaction_dto.pb.h"
+#include "Data/customer_data.hpp"
 
 int main()
 {
-    CustomerDto data;
-    TransactionDto teste;
-
     Socket socket = Socket(5001);
     socket.Listen();
     if (socket.GetStatus() != SocketStatus::Opened)

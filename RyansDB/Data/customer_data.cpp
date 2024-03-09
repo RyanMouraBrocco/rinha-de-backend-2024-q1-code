@@ -1,11 +1,14 @@
-#include "../Dto/Customer/customer_dto.pb.h"
-#include <fstream>
-#include <string>
+#include "customer_data.hpp"
 
-int SaveCustomer(std::string &id, CustomerDto &customer)
+CustomerDataAccess::CustomerDataAccess()
 {
-    std::string path = "CustomersData/" + id + "/data.bin";
-    std::ofstream output(path, std::ios::binary);
+}
+
+int CustomerDataAccess::Save(const std::string &id, const CustomerDto &customer) const
+{
+    std::string path = "./CustomersData/" + id + "/";
+    CreateFolderWithNotExists(path);
+    std::ofstream output(path + "data.bin", std::ios::binary);
     if (!customer.SerializeToOstream(&output))
     {
         return -1;
@@ -14,11 +17,12 @@ int SaveCustomer(std::string &id, CustomerDto &customer)
     return 0;
 }
 
-CustomerDto ReadCustomer(std::string &id)
+CustomerDto CustomerDataAccess::Read(const std::string &id) const
 {
-    std::string path = "CustomersData/" + id + "/data.bin";
+    std::string path = "./CustomersData/" + id + "/";
+    CreateFolderWithNotExists(path);
     CustomerDto customer;
-    std::ifstream input(path, std::ios::binary);
+    std::ifstream input(path + "data.bin", std::ios::binary);
     if (!customer.ParseFromIstream(&input))
     {
         return customer; // i need to improve this return
