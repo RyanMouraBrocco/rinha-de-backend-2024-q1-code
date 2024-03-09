@@ -2,13 +2,13 @@
 #include <iostream>
 #include "Socket/socket.hpp"
 #include "Connections/connection.hpp"
-#include "Data/Customer/customer_data.pb.h"
-#include "Data/Transaction/transaction_data.pb.h"
+#include "Dto/Customer/customer_dto.pb.h"
+#include "Dto/Transaction/transaction_dto.pb.h"
 
 int main()
 {
-    CustomerData data;
-    TransactionData teste;
+    CustomerDto data;
+    TransactionDto teste;
 
     Socket socket = Socket(5001);
     socket.Listen();

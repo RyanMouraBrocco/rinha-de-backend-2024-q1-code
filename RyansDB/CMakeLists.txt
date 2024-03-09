@@ -5,11 +5,11 @@ include(CTest)
 enable_testing()
 
 find_package(Protobuf REQUIRED)
-include_directories(Data/Customer/)
-include_directories(Data/Transaction/)
+include_directories(Dto/Customer/)
+include_directories(Dto/Transaction/)
 protobuf_generate_cpp(PROTO_SRCS PROTO_HDRS
-    Data/Customer/customer_data.proto
-    Data/Transaction/transaction_data.proto
+    Dto/Customer/customer_dto.proto
+    Dto/Transaction/transaction_dto.proto
 )
 
 add_executable(RyansDB
