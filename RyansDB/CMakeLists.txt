@@ -16,6 +16,7 @@ add_executable(RyansDB
     main.cpp
     Connections/connection.cpp
     Socket/socket.cpp
+    Data/customer_data.cpp
     ${PROTO_SRCS}
 )
 
