@@ -12,9 +12,9 @@ int TransactionDataAccess::Save(const std::string &contactId, std::queue<Transac
     TransactionListDto transactionsList;
     while (!transactions.empty())
     {
-        const TransactionDto &transaction = transactions.front();
-        transactions.pop();
+        TransactionDto transaction = transactions.front();
         *transactionsList.add_transactions() = transaction;
+        transactions.pop();
     }
 
     std::ofstream output(path + "data.bin", std::ios::binary);
@@ -28,7 +28,7 @@ int TransactionDataAccess::Save(const std::string &contactId, std::queue<Transac
 
 std::queue<TransactionDto> TransactionDataAccess::Read(const std::string &contactId) const
 {
-    std::string path = "./CustomersData/" + contactId + "/";
+    std::string path = "./TransactionsData/" + contactId + "/";
     CreateFolderWithNotExists(path);
     TransactionListDto transactions;
     std::queue<TransactionDto> result;

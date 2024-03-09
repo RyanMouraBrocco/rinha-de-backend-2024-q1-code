@@ -9,9 +9,24 @@
 #include "Commands/commands.hpp"
 #include "Results/resutls.hpp"
 
+void InsertAllCustomer()
+{
+    CustomerDataAccess customerDataAccess;
+    std::vector<int> limits = {100000, 80000, 1000000, 10000000, 500000};
+
+    CustomerDto customer;
+    for (short i = 0; i < 5; i++)
+    {
+        customer.set_limit(limits[i]);
+        customer.set_balance(0);
+        customerDataAccess.Save(std::to_string((i + 1)), customer);
+    }
+}
+
 int main()
 {
-    Socket socket = Socket(5001);
+    InsertAllCustomer();
+    Socket socket = Socket(5007);
     socket.Listen();
     if (socket.GetStatus() != SocketStatus::Opened)
     {
@@ -41,8 +56,6 @@ int main()
 
             TransactionDataAccess transactionDataAccess = TransactionDataAccess();
             std::queue<TransactionDto> queue = transactionDataAccess.Read(getObject.id);
-
-            connection.SendBytes(notFoundMessage.data(), 9);
 
             GetCustomerWithJoinInTransactionsResult result;
             result.customer = &customer;
