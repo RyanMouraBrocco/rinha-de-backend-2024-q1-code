@@ -3,7 +3,8 @@
         "iostream": "cpp",
         "*.tcc": "cpp",
         "string": "cpp",
-        "ostream": "cpp"
+        "ostream": "cpp",
+        "*.inc": "cpp"
     },
     "cmake.sourceDirectory": "/home/ryanbrocco/rinha-de-backend-2024-q1/RyansDB"
 }

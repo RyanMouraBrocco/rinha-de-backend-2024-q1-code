@@ -2,9 +2,14 @@
 #include <iostream>
 #include "Socket/socket.hpp"
 #include "Connections/connection.hpp"
+#include "Data/Customer/customer_data.pb.h"
+#include "Data/Transaction/transaction_data.pb.h"
 
 int main()
 {
+    CustomerData data;
+    TransactionData teste;
+
     Socket socket = Socket(5001);
     socket.Listen();
     if (socket.GetStatus() != SocketStatus::Opened)
