@@ -2,6 +2,8 @@
     "files.associations": {
         "iostream": "cpp",
         "*.tcc": "cpp",
-        "string": "cpp"
-    }
+        "string": "cpp",
+        "ostream": "cpp"
+    },
+    "cmake.sourceDirectory": "/home/ryanbrocco/rinha-de-backend-2024-q1/RyansDB"
 }

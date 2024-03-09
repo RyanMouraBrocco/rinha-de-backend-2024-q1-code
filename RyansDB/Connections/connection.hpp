@@ -27,6 +27,6 @@ public:
     ~Connection();
     void AcceptForNewAccess();
     ConnectionStatus GetStatus() const;
-    std::string ReceiveBytes(char *buffer, const int &size) const;
-    void SendBytes(char *buffer, const int &size) const;
+    std::string ReceiveBytes(const int &&size);
+    void SendBytes(char *buffer, const int &&size);
 };

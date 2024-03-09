@@ -28,4 +28,5 @@ public:
     ~Socket();
     void Listen();
     int GetListener() const;
+    SocketStatus GetStatus() const;
 };

@@ -2,14 +2,14 @@
 
 Socket::Socket(u_int16_t port)
 {
-    int socketListener = CreateSocketListenerToIpv4();
-    if (socketListener < 0)
+    m_socketListener = CreateSocketListenerToIpv4();
+    if (m_socketListener < 0)
     {
         m_status = SocketStatus::Fail;
         return;
     }
 
-    int bindResult = BindSocketListenerToPort(socketListener, port);
+    int bindResult = BindSocketListenerToPort(m_socketListener, port);
     if (bindResult < 0)
     {
         m_status = SocketStatus::Fail;
@@ -33,11 +33,18 @@ void Socket::Listen()
         // std::cerr << "Can't listen";
         m_status = SocketStatus::Fail;
     }
+    else
+        m_status = SocketStatus::Opened;
 }
 
 int Socket::GetListener() const
 {
     return m_socketListener;
+}
+
+SocketStatus Socket::GetStatus() const
+{
+    return m_status;
 }
 
 int Socket::CreateSocketListenerToIpv4()
