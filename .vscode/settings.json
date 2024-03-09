@@ -61,7 +61,12 @@
         "codecvt": "cpp",
         "iomanip": "cpp",
         "sstream": "cpp",
-        "filesystem": "cpp"
+        "filesystem": "cpp",
+        "any": "cpp",
+        "forward_list": "cpp",
+        "optional": "cpp",
+        "ranges": "cpp",
+        "valarray": "cpp"
     },
     "cmake.sourceDirectory": "/home/ryanbrocco/rinha-de-backend-2024-q1/RyansDB"
 }

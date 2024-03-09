@@ -1,10 +1,11 @@
-cmake_minimum_required(VERSION 3.0.0)
+cmake_minimum_required(VERSION 3.1)
 project(RyansDB VERSION 0.1.0 LANGUAGES C CXX)
 
 include(CTest)
 enable_testing()
 
 find_package(Protobuf REQUIRED)
+
 include_directories(Dto/Customer/)
 include_directories(Dto/Transaction/)
 protobuf_generate_cpp(PROTO_SRCS PROTO_HDRS

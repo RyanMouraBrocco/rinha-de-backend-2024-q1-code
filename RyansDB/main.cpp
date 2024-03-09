@@ -5,6 +5,22 @@
 #include "Dto/Customer/customer_dto.pb.h"
 #include "Dto/Transaction/transaction_dto.pb.h"
 #include "Data/customer_data.hpp"
+#include "nlohmann/json.hpp"
+
+struct Message
+{
+    std::string endpoint;
+    std::string data;
+};
+
+Message DeserializeStringToMessage(const std::string &jsonString)
+{
+    nlohmann::json jsonObject = nlohmann::json::parse(jsonString);
+    Message message;
+    message.endpoint = jsonObject["e"];
+    message.data = jsonObject["d"];
+    return message;
+}
 
 int main()
 {
@@ -26,7 +42,8 @@ int main()
         if (connection.GetStatus() != ConnectionStatus::Connected)
             break;
 
-        std::cout << "Receive data: " << text << std::endl;
+        Message message = DeserializeStringToMessage(text);
+        std::cout << "Message: " << message.endpoint << " with data: " << message.data << std::endl;
 
         connection.SendBytes(text.data(), sizeof(text) + 1);
     }
