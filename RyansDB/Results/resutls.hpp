@@ -25,8 +25,8 @@ inline std::string TimestampToString(const google::protobuf::Timestamp &timestam
 
 struct GetCustomerWithJoinInTransactionsResult
 {
-    CustomerDto *customer;
-    std::queue<TransactionDto> *transactions;
+    CustomerDto customer;
+    std::queue<TransactionDto> transactions;
 
     std::string SerializeJson()
     {
@@ -34,13 +34,13 @@ struct GetCustomerWithJoinInTransactionsResult
         nlohmann::json customerJson;
         nlohmann::json transactionsListJson;
 
-        customerJson["limit"] = customer->limit();
-        customerJson["balance"] = customer->balance();
+        customerJson["limit"] = customer.limit();
+        customerJson["balance"] = customer.balance();
 
-        while (!transactions->empty())
+        while (!transactions.empty())
         {
             nlohmann::json transactionJson;
-            TransactionDto &transaction = transactions->front();
+            TransactionDto &transaction = transactions.front();
             transactionJson["value"] = transaction.value();
             transactionJson["iscredit"] = transaction.iscredit();
             transactionJson["description"] = transaction.description();
@@ -48,7 +48,7 @@ struct GetCustomerWithJoinInTransactionsResult
 
             transactionsListJson.push_back(transactionJson);
 
-            transactions->pop();
+            transactions.pop();
         }
 
         resultJson["customer"] = customerJson;
@@ -59,26 +59,27 @@ struct GetCustomerWithJoinInTransactionsResult
 
 struct CreditTransactionResult
 {
-    CustomerDto *customer;
+    CustomerDto customer;
 
     std::string SerializeJson()
     {
         nlohmann::json customerJson;
-        customerJson["limit"] = customer->limit();
-        customerJson["balance"] = customer->balance();
+        customerJson["limit"] = customer.limit();
+        customerJson["balance"] = customer.balance();
         return customerJson.dump();
     }
 };
 
 struct DebtTransactionResult
 {
-    CustomerDto *customer;
+    CustomerDto customer;
+    bool success;
 
     std::string SerializeJson()
     {
         nlohmann::json customerJson;
-        customerJson["limit"] = customer->limit();
-        customerJson["balance"] = customer->balance();
+        customerJson["limit"] = customer.limit();
+        customerJson["balance"] = customer.balance();
         return customerJson.dump();
     }
 };

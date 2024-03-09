@@ -1,10 +1,10 @@
-#include "transaction_data.hpp"
+#include "transaction_repository.hpp"
 
-TransactionDataAccess::TransactionDataAccess()
+TransactionRepository::TransactionRepository()
 {
 }
 
-int TransactionDataAccess::Save(const std::string &contactId, std::queue<TransactionDto> &transactions) const
+int TransactionRepository::Save(const std::string &contactId, std::queue<TransactionDto> &transactions) const
 {
     std::string path = "./TransactionsData/" + contactId + "/";
     CreateFolderWithNotExists(path);
@@ -26,7 +26,7 @@ int TransactionDataAccess::Save(const std::string &contactId, std::queue<Transac
     return 0;
 }
 
-std::queue<TransactionDto> TransactionDataAccess::Read(const std::string &contactId) const
+std::queue<TransactionDto> TransactionRepository::Read(const std::string &contactId) const
 {
     std::string path = "./TransactionsData/" + contactId + "/";
     CreateFolderWithNotExists(path);

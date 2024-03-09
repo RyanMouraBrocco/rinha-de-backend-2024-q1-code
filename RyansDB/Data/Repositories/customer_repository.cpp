@@ -1,10 +1,10 @@
-#include "customer_data.hpp"
+#include "customer_repository.hpp"
 
-CustomerDataAccess::CustomerDataAccess()
+CustomerRepository::CustomerRepository()
 {
 }
 
-int CustomerDataAccess::Save(const std::string &id, const CustomerDto &customer) const
+int CustomerRepository::Save(const std::string &id, const CustomerDto &customer) const
 {
     std::string path = "./CustomersData/" + id + "/";
     CreateFolderWithNotExists(path);
@@ -17,7 +17,7 @@ int CustomerDataAccess::Save(const std::string &id, const CustomerDto &customer)
     return 0;
 }
 
-CustomerDto CustomerDataAccess::Read(const std::string &id) const
+CustomerDto CustomerRepository::Read(const std::string &id) const
 {
     std::string path = "./CustomersData/" + id + "/";
     CreateFolderWithNotExists(path);
