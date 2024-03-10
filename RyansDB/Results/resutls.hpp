@@ -32,7 +32,7 @@ struct GetCustomerWithJoinInTransactionsResult
     {
         nlohmann::json resultJson;
         nlohmann::json customerJson;
-        nlohmann::json transactionsListJson;
+        nlohmann::json transactionsListJson = nlohmann::json::array();
 
         customerJson["limit"] = customer.limit();
         customerJson["total"] = customer.balance();
