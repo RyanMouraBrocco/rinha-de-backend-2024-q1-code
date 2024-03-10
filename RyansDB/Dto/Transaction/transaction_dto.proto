@@ -1,0 +1,13 @@
+syntax = "proto3";
+import "google/protobuf/timestamp.proto";
+
+message TransactionDto {
+    int32 value = 1;
+    bool isCredit = 2;
+    string description = 3;
+    google.protobuf.Timestamp createDate = 4;
+}
+
+message TransactionListDto {
+  repeated TransactionDto transactions = 1;
+}

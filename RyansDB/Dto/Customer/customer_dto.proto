@@ -1,0 +1,6 @@
+syntax = "proto3";
+
+message CustomerDto {
+    int32 limit = 1;
+    int32 balance = 2;
+}

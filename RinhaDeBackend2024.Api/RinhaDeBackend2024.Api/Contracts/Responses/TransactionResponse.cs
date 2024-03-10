@@ -2,7 +2,7 @@
 
 namespace RinhaDeBackend2024.Api.Contracts.Responses
 {
-    public sealed class TransactionResponse // here could be a unsign integer or maybe somethin with less bytes
+    public sealed class TransactionResponse
     {
         [JsonPropertyName("valor")]
         public int ValueInCents { get; set; }
