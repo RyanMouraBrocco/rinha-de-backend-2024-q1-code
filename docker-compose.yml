@@ -15,7 +15,7 @@ services:
     deploy:
       resources:
         limits:
-          cpus: "0.4"
+          cpus: "0.3"
           memory: "150MB"
 
   api02:
@@ -54,7 +54,7 @@ services:
     deploy:
       resources:
         limits:
-          cpus: "0.5"
+          cpus: "0.7"
           memory: "200MB"
 
 # O uso do modo `bridge` deve ser adequado à carga que será usada no teste.
