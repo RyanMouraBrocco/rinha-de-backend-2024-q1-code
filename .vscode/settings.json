@@ -68,5 +68,5 @@
         "ranges": "cpp",
         "valarray": "cpp"
     },
-    "cmake.sourceDirectory": "/home/ryanbrocco/rinha-de-backend-2024-q1/RyansDB"
+    "cmake.sourceDirectory": "/home/ryanbrocco/rinha-de-backend-2024-q1-code/RyansDB"
 }

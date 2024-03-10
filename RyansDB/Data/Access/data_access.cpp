@@ -17,6 +17,20 @@ inline google::protobuf::Timestamp *GetCurrentTimeStamp()
 
 DataAccess::DataAccess() {}
 
+DataAccess *DataAccess::GetInstance()
+{
+    static std::mutex m_singletonMutex;
+    static DataAccess *m_singleton;
+    m_singletonMutex.lock();
+    if (m_singleton == nullptr)
+    {
+        m_singleton = new DataAccess();
+    }
+    m_singletonMutex.unlock();
+
+    return m_singleton;
+}
+
 GetCustomerWithJoinInTransactionsResult DataAccess::GetCustomersWithJoinInTransactions(const GetCustomerWithJoinInTransactionsCommand command) const
 {
     CustomerDto customer = m_contactRepository.Read(command.id);
@@ -29,13 +43,15 @@ GetCustomerWithJoinInTransactionsResult DataAccess::GetCustomersWithJoinInTransa
     return result;
 }
 
-CreditTransactionResult DataAccess::CreditTransaction(CreditTransactionCommand command) const
+CreditTransactionResult DataAccess::CreditTransaction(CreditTransactionCommand command)
 {
+    m_contactsMutex[command.id].lock();
     CustomerDto customer = m_contactRepository.Read(command.id);
     customer.set_balance(customer.balance() + command.balance);
     m_contactRepository.Save(command.id, customer);
 
     AddTransaction(command.id, command.description, true, command.balance);
+    m_contactsMutex[command.id].unlock();
 
     CreditTransactionResult result;
     result.customer = customer;
@@ -43,14 +59,15 @@ CreditTransactionResult DataAccess::CreditTransaction(CreditTransactionCommand c
     return result;
 }
 
-DebtTransactionResult DataAccess::DebtTransaction(DebtTransactionCommand command) const
+DebtTransactionResult DataAccess::DebtTransaction(DebtTransactionCommand command)
 {
     DebtTransactionResult result;
-
+    m_contactsMutex[command.id].lock();
     CustomerDto customer = m_contactRepository.Read(command.id);
     int finalBalance = customer.balance() - command.balance;
     if (finalBalance < -customer.limit())
     {
+        m_contactsMutex[command.id].unlock();
         result.success = false;
         return result;
     }
@@ -59,6 +76,7 @@ DebtTransactionResult DataAccess::DebtTransaction(DebtTransactionCommand command
     m_contactRepository.Save(command.id, customer);
 
     AddTransaction(command.id, command.description, false, command.balance);
+    m_contactsMutex[command.id].unlock();
 
     result.customer = customer;
     result.success = true;

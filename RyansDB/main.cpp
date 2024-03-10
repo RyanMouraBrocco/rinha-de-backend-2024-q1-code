@@ -3,6 +3,7 @@
 #include "Socket/socket.hpp"
 #include "Connections/connection.hpp"
 #include "Data/Access/data_access.hpp"
+#include <thread>
 
 void InsertAllCustomer()
 {
@@ -18,28 +19,19 @@ void InsertAllCustomer()
     }
 }
 
-int main()
+void EndPointsListener(Connection *connection)
 {
-    InsertAllCustomer();
-    Socket socket = Socket(5007);
-    socket.Listen();
-    if (socket.GetStatus() != SocketStatus::Opened)
-    {
-        return -1;
-    }
-
-    Connection connection = Connection(socket);
-    connection.AcceptForNewAccess();
+    connection->AcceptForNewAccess();
 
     char buf[4096];
     std::string notFoundMessage = "NotFound";
     std::string invalidOperationMessage = "InvalidOp";
-    DataAccess dataAccess = DataAccess();
+    DataAccess *dataAccess = DataAccess::GetInstance();
     while (true)
     {
-        std::string text = connection.ReceiveBytes(4096);
+        std::string text = connection->ReceiveBytes(4096);
 
-        if (connection.GetStatus() != ConnectionStatus::Connected)
+        if (connection->GetStatus() != ConnectionStatus::Connected)
             break;
 
         MessageCommand message = MessageCommand::DeserializeJson(text);
@@ -47,36 +39,72 @@ int main()
         if (message.endpoint == "GetCustomersWithJoinInTransactions")
         {
             GetCustomerWithJoinInTransactionsCommand command = GetCustomerWithJoinInTransactionsCommand::DeserializeJson(message.data);
-            GetCustomerWithJoinInTransactionsResult result = dataAccess.GetCustomersWithJoinInTransactions(command);
+            GetCustomerWithJoinInTransactionsResult result = dataAccess->GetCustomersWithJoinInTransactions(command);
             std::string jsonResult = result.SerializeJson();
             char *resultInCharArray = jsonResult.data();
-            connection.SendBytes(resultInCharArray, sizeof(char) * jsonResult.length());
+            connection->SendBytes(resultInCharArray, sizeof(char) * jsonResult.length());
         }
         else if (message.endpoint == "CreditTransaction")
         {
             CreditTransactionCommand command = CreditTransactionCommand::DeserializeJson(message.data);
-            CreditTransactionResult result = dataAccess.CreditTransaction(command);
+            CreditTransactionResult result = dataAccess->CreditTransaction(command);
             std::string jsonResult = result.SerializeJson();
             char *resultInCharArray = jsonResult.data();
-            connection.SendBytes(resultInCharArray, sizeof(char) * jsonResult.length());
+            connection->SendBytes(resultInCharArray, sizeof(char) * jsonResult.length());
         }
         else if (message.endpoint == "DebtTransaction")
         {
             DebtTransactionCommand command = DebtTransactionCommand::DeserializeJson(message.data);
-            DebtTransactionResult result = dataAccess.DebtTransaction(command);
+            DebtTransactionResult result = dataAccess->DebtTransaction(command);
 
             if (result.success)
             {
                 std::string jsonResult = result.SerializeJson();
                 char *resultInCharArray = jsonResult.data();
-                connection.SendBytes(resultInCharArray, sizeof(char) * jsonResult.length());
+                connection->SendBytes(resultInCharArray, sizeof(char) * jsonResult.length());
             }
             else
-                connection.SendBytes(invalidOperationMessage.data(), 9);
+                connection->SendBytes(invalidOperationMessage.data(), 9);
         }
         else
-            connection.SendBytes(notFoundMessage.data(), 9);
+            connection->SendBytes(notFoundMessage.data(), 9);
     }
+}
+
+int main()
+{
+    InsertAllCustomer();
+    Socket socket = Socket(5001);
+    socket.Listen();
+    if (socket.GetStatus() != SocketStatus::Opened)
+    {
+        return -1;
+    }
+
+    short connectionPool = 40;
+
+    Connection **connections = new Connection *[connectionPool];
+    std::thread **threads = new std::thread *[connectionPool];
+
+    for (short i = 0; i < connectionPool; i++)
+    {
+        connections[i] = new Connection(socket);
+        threads[i] = new std::thread(EndPointsListener, connections[i]);
+    }
+
+    for (short i = 0; i < connectionPool; i++)
+    {
+        threads[i]->join();
+    }
+
+    for (short i = 0; i < connectionPool; i++)
+    {
+        delete connections[i];
+        delete threads[i];
+    }
+
+    delete[] connections;
+    delete[] threads;
 
     return 0;
 }
