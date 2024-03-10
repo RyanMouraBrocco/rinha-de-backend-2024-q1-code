@@ -44,7 +44,7 @@ void EndPointsListener(Connection *connection)
             GetCustomerWithJoinInTransactionsResult result = dataAccess->GetCustomersWithJoinInTransactions(command);
             std::string jsonResult = result.SerializeJson();
             char *resultInCharArray = jsonResult.data();
-            connection->SendBytes(resultInCharArray, sizeof(char) * jsonResult.length());
+            connection->SendBytes(resultInCharArray, sizeof(char) * jsonResult.length() - 1);
         }
         else if (message.endpoint == "CreditTransaction")
         {
@@ -52,7 +52,7 @@ void EndPointsListener(Connection *connection)
             CreditTransactionResult result = dataAccess->CreditTransaction(command);
             std::string jsonResult = result.SerializeJson();
             char *resultInCharArray = jsonResult.data();
-            connection->SendBytes(resultInCharArray, sizeof(char) * jsonResult.length());
+            connection->SendBytes(resultInCharArray, sizeof(char) * jsonResult.length() - 1);
         }
         else if (message.endpoint == "DebtTransaction")
         {
@@ -63,13 +63,13 @@ void EndPointsListener(Connection *connection)
             {
                 std::string jsonResult = result.SerializeJson();
                 char *resultInCharArray = jsonResult.data();
-                connection->SendBytes(resultInCharArray, sizeof(char) * jsonResult.length());
+                connection->SendBytes(resultInCharArray, sizeof(char) * jsonResult.length() - 1);
             }
             else
-                connection->SendBytes(invalidOperationMessage.data(), 9);
+                connection->SendBytes(invalidOperationMessage.data(), 8);
         }
         else
-            connection->SendBytes(notFoundMessage.data(), 9);
+            connection->SendBytes(notFoundMessage.data(), 8);
     }
 }
 
