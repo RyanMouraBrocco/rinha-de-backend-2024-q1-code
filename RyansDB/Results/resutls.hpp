@@ -17,7 +17,7 @@ inline std::string TimestampToString(const google::protobuf::Timestamp &timestam
 
     // Format the datetime string
     std::ostringstream oss;
-    oss << std::put_time(&tm_time, "%Y-%m-%d %H:%M:%S.");                    // Format with milliseconds
+    oss << std::put_time(&tm_time, "%Y-%m-%dT%H:%M:%S.");                    // Format with milliseconds
     oss << std::setfill('0') << std::setw(3) << timestamp.nanos() % 1000000; // Append milliseconds
     oss << "Z";                                                              // Append 'Z' for UTC timezone
     return oss.str();
@@ -34,7 +34,7 @@ struct GetCustomerWithJoinInTransactionsResult
         nlohmann::json customerJson;
         nlohmann::json transactionsListJson = nlohmann::json::array();
 
-        customerJson["limit"] = customer.limit();
+        customerJson["limite"] = customer.limit();
         customerJson["total"] = customer.balance();
 
         while (!transactions.empty())
@@ -42,7 +42,11 @@ struct GetCustomerWithJoinInTransactionsResult
             nlohmann::json transactionJson;
             TransactionDto &transaction = transactions.front();
             transactionJson["valor"] = transaction.value();
-            transactionJson["tipo"] = transaction.iscredit() ? 'c' : 'd';
+            if (transaction.iscredit())
+                transactionJson["tipo"] = "c";
+            else
+                transactionJson["tipo"] = "d";
+
             transactionJson["descricao"] = transaction.description();
             transactionJson["realizada_em"] = TimestampToString(transaction.createdate());
 
