@@ -75,7 +75,7 @@ customerGroup.MapGet("/{id}/extrato", ([FromRoute] int id, [FromServices] Databa
         return Results.NotFound();
 
     var extract = sqlAccess.GetCustomerWithLast10TransactionsByCustomerId(ref id);
-    extract.Balance.Date = DateTime.Now;
+    extract.Balance.Date = DateTime.UtcNow;
     extract.LastTransactions.Reverse();
 
     return Results.Ok(extract);
