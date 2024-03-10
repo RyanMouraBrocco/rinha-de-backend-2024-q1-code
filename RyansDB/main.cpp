@@ -13,9 +13,13 @@ void InsertAllCustomer()
     CustomerDto customer;
     for (short i = 0; i < 5; i++)
     {
-        customer.set_limit(limits[i]);
-        customer.set_balance(0);
-        customerDataAccess.Save(std::to_string((i + 1)), customer);
+        std::string id = std::to_string((i + 1));
+        if (!std::filesystem::is_directory("./CustomersData/" + id + "/"))
+        {
+            customer.set_limit(limits[i]);
+            customer.set_balance(0);
+            customerDataAccess.Save(id, customer);
+        }
     }
 
     std::cout << "Customers inseted" << std::endl;
