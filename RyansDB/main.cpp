@@ -17,6 +17,8 @@ void InsertAllCustomer()
         customer.set_balance(0);
         customerDataAccess.Save(std::to_string((i + 1)), customer);
     }
+
+    std::cout << "Customers inseted" << std::endl;
 }
 
 void EndPointsListener(Connection *connection)
