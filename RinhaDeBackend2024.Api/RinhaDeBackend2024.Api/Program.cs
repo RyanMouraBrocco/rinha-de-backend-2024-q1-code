@@ -16,7 +16,6 @@ builder.Services.ConfigureHttpJsonOptions(options =>
 builder.Logging.ClearProviders();
 
 Console.WriteLine("Waiting DB starts");
-Thread.Sleep(5000);
 
 #region Services Injections
 builder.Services.AddSingleton(new DatabaseAccess("db", 5432));
