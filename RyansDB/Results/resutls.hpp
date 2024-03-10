@@ -35,24 +35,24 @@ struct GetCustomerWithJoinInTransactionsResult
         nlohmann::json transactionsListJson;
 
         customerJson["limit"] = customer.limit();
-        customerJson["balance"] = customer.balance();
+        customerJson["total"] = customer.balance();
 
         while (!transactions.empty())
         {
             nlohmann::json transactionJson;
             TransactionDto &transaction = transactions.front();
-            transactionJson["value"] = transaction.value();
-            transactionJson["iscredit"] = transaction.iscredit();
-            transactionJson["description"] = transaction.description();
-            transactionJson["createdate"] = TimestampToString(transaction.createdate());
+            transactionJson["valor"] = transaction.value();
+            transactionJson["tipo"] = transaction.iscredit() ? 'c' : 'd';
+            transactionJson["descricao"] = transaction.description();
+            transactionJson["realizada_em"] = TimestampToString(transaction.createdate());
 
             transactionsListJson.push_back(transactionJson);
 
             transactions.pop();
         }
 
-        resultJson["customer"] = customerJson;
-        resultJson["transactions"] = transactionsListJson;
+        resultJson["saldo"] = customerJson;
+        resultJson["ultimas_transacoes"] = transactionsListJson;
         return resultJson.dump();
     }
 };
@@ -64,8 +64,8 @@ struct CreditTransactionResult
     std::string SerializeJson()
     {
         nlohmann::json customerJson;
-        customerJson["limit"] = customer.limit();
-        customerJson["balance"] = customer.balance();
+        customerJson["limite"] = customer.limit();
+        customerJson["saldo"] = customer.balance();
         return customerJson.dump();
     }
 };
@@ -78,8 +78,8 @@ struct DebtTransactionResult
     std::string SerializeJson()
     {
         nlohmann::json customerJson;
-        customerJson["limit"] = customer.limit();
-        customerJson["balance"] = customer.balance();
+        customerJson["limite"] = customer.limit();
+        customerJson["saldo"] = customer.balance();
         return customerJson.dump();
     }
 };

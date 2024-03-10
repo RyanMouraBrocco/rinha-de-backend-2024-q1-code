@@ -17,7 +17,7 @@ services:
       resources:
         limits:
           cpus: "0.4"
-          memory: "60MB"
+          memory: "150MB"
 
   api02:
     # Essa sintaxe reusa o que foi declarado em 'api01'.
@@ -44,26 +44,20 @@ services:
       resources:
         limits:
           cpus: "0.2"
-          memory: "30MB"
+          memory: "50MB"
 
   db:
-    image: postgres:latest
+    image: ryanmourabrocco/ryansdb:rinha
     hostname: db
     networks:
       - rinha-network
-    environment:
-      - POSTGRES_PASSWORD=BabyDoBiruleibe123#
-      - POSTGRES_USER=admin
-      - POSTGRES_DB=Rinha
     ports:
       - "5432:5432"
-    volumes:
-      - ./script.sql:/docker-entrypoint-initdb.d/script.sql
     deploy:
       resources:
         limits:
           cpus: "0.5"
-          memory: "400MB"
+          memory: "200MB"
 
 # O uso do modo `bridge` deve ser adequado à carga que será usada no teste.
 # A edição anterior se beneficiou do modo host pois o volume de requisições
