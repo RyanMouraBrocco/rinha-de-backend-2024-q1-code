@@ -13,9 +13,16 @@ builder.Services.ConfigureHttpJsonOptions(options =>
     options.SerializerOptions.TypeInfoResolverChain.Insert(0, AppJsonSerializerContext.Default);
 });
 
+builder.Logging.ClearProviders();
+
+Console.WriteLine("Waiting DB starts");
+Thread.Sleep(5000);
+
 #region Services Injections
 builder.Services.AddSingleton(new DatabaseAccess("db", 5432));
 #endregion
+
+Console.WriteLine("All connected");
 
 var app = builder.Build();
 
