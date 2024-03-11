@@ -20,6 +20,12 @@ var connectionString = rawConnectionString.Replace("@HOSTNAME", Environment.GetE
 builder.Services.AddSingleton(new SqlAccess(connectionString));
 #endregion
 
+builder.WebHost.ConfigureKestrel(serverOptions =>
+{
+    serverOptions.Limits.KeepAliveTimeout = TimeSpan.FromMinutes(10);
+    serverOptions.AllowSynchronousIO = true;
+});
+
 var app = builder.Build();
 
 
@@ -29,7 +35,7 @@ customerGroup.MapPost("/{id}/transacoes", async ([FromRoute] int id,
                                            [FromServices] SqlAccess sqlAccess,
                                            HttpRequest httpRequest) =>
 {
-    if (id > 5 || id < 0)
+    if (id > 5 || id <= 0)
         return Results.NotFound();
 
     TransactionRequest request = null;
@@ -76,7 +82,7 @@ customerGroup.MapPost("/{id}/transacoes", async ([FromRoute] int id,
 
 customerGroup.MapGet("/{id}/extrato", ([FromRoute] int id, [FromServices] SqlAccess sqlAccess) =>
 {
-    if (id > 5 || id < 0)
+    if (id > 5 || id <= 0)
         return Results.NotFound();
 
     var customer = sqlAccess.GetCustomerById(ref id);
