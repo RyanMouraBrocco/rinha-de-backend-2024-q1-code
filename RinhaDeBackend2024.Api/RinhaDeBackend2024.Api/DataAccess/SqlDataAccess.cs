@@ -7,35 +7,16 @@ namespace RinhaDeBackend2024.Api.DataAccess
 {
     public sealed class SqlAccess
     {
-        private const byte CONNECTION_POOL_LEN = 2;
+        private const byte CONNECTION_POOL_LEN = 8;
         private readonly NpgsqlConnection[] _connectionPool;
         private byte _connectionSelector;
         public SqlAccess(string connectionString)
         {
             _connectionPool = new NpgsqlConnection[CONNECTION_POOL_LEN];
-            bool someConnectionWorks = false;
             for (byte i = 0; i < CONNECTION_POOL_LEN; i++)
             {
                 _connectionPool[i] = new NpgsqlConnection(connectionString);
-                while (true)
-                {
-                    try
-                    {
-                        _connectionPool[i].Open();
-                        someConnectionWorks = true;
-                        break;
-                    }
-                    catch
-                    {
-                        if (!someConnectionWorks)
-                        {
-                            Console.WriteLine("Waiting bd starts");
-                            Thread.Sleep(2000);
-                        }
-                        else
-                            break;
-                    }
-                }
+                _connectionPool[i].Open();
             }
             _connectionSelector = 0;
         }
